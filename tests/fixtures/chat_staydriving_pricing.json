@@ -1,0 +1,12 @@
+{
+  "_fixture_note": "SYNTHETIC stand-in for a Stay Driving operations chat export.",
+  "chat_id": "staydriving-pricing-2026-08-21",
+  "title": "Stay Driving rate card rework",
+  "turns": [
+    {"kind": "human", "text": "yo"},
+    {"kind": "human", "text": "We're going with flat per-trip pricing for Stay Driving. Hourly is retired."},
+    {"kind": "human", "text": "TODO: update the booking form to show the flat rate."},
+    {"kind": "human", "text": "The new rate card supersedes [[Rate_Card_V1]]."},
+    {"kind": "assistant", "text": "Got it."}
+  ]
+}

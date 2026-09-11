@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chat-organizer"
+version = "1.0.0"
+description = "Chat Root Organizer service for DDB.OS — see Chat_Root_Organizer_Service.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+# Flask is the host's, not ours: the parsing and retrieval layers run on a bare
+# Termux Python. Only chat_organizer.api needs it.
+api = ["flask>=2.0"]
+dev = ["pytest>=7.0", "flask>=2.0"]
+
+[tool.setuptools]
+packages = ["chat_organizer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

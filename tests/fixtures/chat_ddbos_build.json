@@ -1,0 +1,16 @@
+{
+  "_fixture_note": "SYNTHETIC stand-in shaped like a real Claude chat export. Swap for a genuine DDB.OS export before trusting the reconciliation numbers.",
+  "chat_id": "ddbos-build-2026-09-02",
+  "title": "DDB.OS graph table build",
+  "turns": [
+    {"kind": "human", "text": "hey"},
+    {"kind": "human", "text": "I want the chat organizer to live inside DDB.OS, not as a separate service. One new table set on the existing SQLite DB."},
+    {"kind": "assistant", "text": "Understood."},
+    {"kind": "human", "text": "We decided tags and links are JSON columns on the graph row, not join tables. One row per node is the whole node."},
+    {"kind": "human", "text": "The graph table must have canon_id as its primary key, and graph_fts must stay in lockstep with it."},
+    {"kind": "human", "text": "TODO: add the two read endpoints to the Flask app at 127.0.0.1:8410."},
+    {"kind": "human", "text": "Should we build the standalone offline fallback now, or defer it?"},
+    {"kind": "human", "text": "The retrieval layer depends on [[COS_Root_Organizer_Protocol]] for its trigger phrasings."},
+    {"kind": "human", "text": "ok cool thanks"}
+  ]
+}
