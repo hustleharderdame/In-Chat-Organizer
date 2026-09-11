@@ -1,0 +1,10 @@
+# Android / Gradle build output — none of this belongs in the graph repo.
+.gradle/
+build/
+local.properties
+*.apk
+*.aab
+*.keystore
+*.jks
+.idea/
+captures/

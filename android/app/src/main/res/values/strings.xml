@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Organizer</string>
+    <string name="share_label">Capture to graph</string>
+    <string name="offline_title">Organizer isn\'t running</string>
+    <string name="offline_body">Start the Flask app in Termux, then retry.\n\npython3 -m flask --app ddbos run --port 8410</string>
+    <string name="retry">Retry</string>
+    <string name="captured">Captured to the graph</string>
+    <string name="capture_failed">Couldn\'t reach the organizer</string>
+</resources>

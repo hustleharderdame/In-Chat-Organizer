@@ -28,8 +28,8 @@ optional chat-search provider; the parsing and retrieval modules stay pure.
 from __future__ import annotations
 
 import sqlite3
+import threading
 from dataclasses import dataclass, field
-from functools import partial
 from typing import Any, Dict, List, Optional
 
 from . import bridge, db, parser, retrieval
@@ -73,6 +73,11 @@ class Organizer:
 
         org = Organizer("/home/dame/ddbos/ddb.sqlite3")
         result = org.ingest("We're going with flat per-trip pricing.")
+
+    **Thread safety.** One connection is shared by every request thread the WSGI
+    server dispatches, so every public method here takes ``_lock`` first. The
+    lock lives at this layer, not in :mod:`chat_organizer.db`, because this class
+    is what owns the connection — ``db`` stays a thin, lock-free data layer.
     """
 
     def __init__(
@@ -86,11 +91,23 @@ class Organizer:
         if conn is not None:
             db.migrate(self.conn)
         self.provider = provider
+        # Re-entrant: ingest() takes the lock and then calls _apply_all().
+        self._lock = threading.RLock()
 
     # --- read-side helper handed to the pure parsers -------------------
     @property
     def matcher(self) -> parser.Matcher:
-        return partial(db.search_nodes, self.conn)
+        """Read-side lookup handed to the pure parsers.
+
+        Callers reach this from inside a locked method; the lock is re-entrant,
+        so taking it again here is safe and keeps a bare ``organizer.matcher``
+        call correct too.
+        """
+        def locked_search(terms):
+            with self._lock:
+                return db.search_nodes(self.conn, terms)
+
+        return locked_search
 
     # --- the one ingestion entrypoint ----------------------------------
     def ingest(
@@ -103,6 +120,19 @@ class Organizer:
         apply_ops: bool = True,
     ) -> IngestResult:
         """Route one chat turn: bridge paste, retrieval request, or native turn."""
+        with self._lock:
+            return self._ingest(text, parent_root=parent_root, source_chat=source_chat,
+                                source_turn_kind=source_turn_kind, apply_ops=apply_ops)
+
+    def _ingest(
+        self,
+        text: str,
+        *,
+        parent_root: Optional[str] = None,
+        source_chat: Optional[str] = None,
+        source_turn_kind: Optional[str] = "human",
+        apply_ops: bool = True,
+    ) -> IngestResult:
         if bridge.looks_like_bridge_paste(text):
             ops = bridge.parse_bridge_paste(
                 text,
@@ -149,13 +179,13 @@ class Organizer:
     # --- explicit retrieval, for a host that wants it on its own -------
     def recall(self, text: str) -> IngestResult:
         """Run only the retrieval path for a turn, writing nothing on ambiguity."""
-        result = IngestResult(path="recall", retrieval_triggered=True)
-        result.keywords = retrieval.extract_keywords(text)
-        result.hits = retrieval.search_past_chats(result.keywords, self.provider)
-        op = retrieval.resolve_hits(result.hits, text)
-        result.ops.append(op)
-        self._apply_all(result)
-        return result
+        with self._lock:
+            result = IngestResult(path="recall", retrieval_triggered=True)
+            result.keywords = retrieval.extract_keywords(text)
+            result.hits = retrieval.search_past_chats(result.keywords, self.provider)
+            result.ops.append(retrieval.resolve_hits(result.hits, text))
+            self._apply_all(result)
+            return result
 
     def answer_ambiguity(self, chosen: Dict[str, Any], *, parent_root: Optional[str] = None) -> Node:
         """Land the candidate Dame picked after a question op.
@@ -163,6 +193,10 @@ class Organizer:
         Accepts either a retrieval candidate (``chat_id``) or a graph candidate
         (``canon_id``) — the two shapes a question op can carry.
         """
+        with self._lock:
+            return self._answer_ambiguity(chosen, parent_root=parent_root)
+
+    def _answer_ambiguity(self, chosen: Dict[str, Any], *, parent_root: Optional[str] = None) -> Node:
         if chosen.get("canon_id"):
             stored = db.get_node(self.conn, chosen["canon_id"])
             if stored is None:
@@ -180,13 +214,15 @@ class Organizer:
 
     # --- read helpers used by the Flask endpoints ----------------------
     def nodes(self, **kwargs: Any) -> List[Node]:
-        return db.list_nodes(self.conn, **kwargs)
+        with self._lock:
+            return db.list_nodes(self.conn, **kwargs)
 
     def open_tasks(self, group_by: str = "parent_root") -> Dict[str, List[Node]]:
         """Open tasks grouped for the Dataview-task-group equivalent."""
-        tasks = db.list_nodes(
-            self.conn, node_type="task", limit=1000, order_by="updated_at"
-        )
+        with self._lock:
+            tasks = db.list_nodes(
+                self.conn, node_type="task", limit=1000, order_by="updated_at"
+            )
         grouped: Dict[str, List[Node]] = {}
         for task in tasks:
             if task.status not in ("active", "planning"):
@@ -196,4 +232,5 @@ class Organizer:
         return grouped
 
     def close(self) -> None:
-        self.conn.close()
+        with self._lock:
+            self.conn.close()

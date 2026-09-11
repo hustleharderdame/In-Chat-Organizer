@@ -142,3 +142,51 @@ def test_replaying_the_same_export_twice_is_idempotent_in_shape(organizer, chat_
     for turn in export["turns"]:
         organizer.ingest(turn["text"], source_chat=export["chat_id"])
     assert {n.node_id for n in organizer.nodes(limit=100)} == first_pass_ids
+
+
+# --- thread safety -----------------------------------------------------------
+def test_organizer_is_usable_from_other_threads(tmp_path):
+    """A WSGI server dispatches requests on worker threads.
+
+    The connection is opened once at startup on the main thread, so using it
+    from a request thread must not raise sqlite3.ProgrammingError. This is the
+    exact shape of the failure that only appears under a real server — the
+    Flask test client runs in the calling thread and never sees it.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    org = Organizer(str(tmp_path / "ddbos.sqlite3"))   # main thread
+
+    def work(i):
+        org.ingest(f"We decided that option number {i} is the locked approach.")
+        org.nodes(limit=50)
+        org.open_tasks()
+        return True
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        assert all(pool.map(work, range(24)))
+
+    assert len(org.nodes(limit=200)) >= 1
+    org.close()
+
+
+def test_concurrent_writes_do_not_lose_rows(tmp_path):
+    """Distinct turns written from many threads must all land."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    org = Organizer(str(tmp_path / "ddbos.sqlite3"))
+    subjects = [
+        "kangaroo", "helicopter", "saxophone", "tungsten", "meridian",
+        "avocado", "porcelain", "trombone", "quicksand", "lantern",
+    ]
+
+    def work(word):
+        return org.ingest(f"We decided the {word} approach is locked for now.")
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(work, subjects))
+
+    bodies = " ".join(n.body for n in org.nodes(limit=500)).lower()
+    missing = [w for w in subjects if w not in bodies]
+    assert not missing, f"lost turns: {missing}"
+    org.close()

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cleartext is enabled for loopback ONLY.
+
+  The organizer serves plain HTTP because it never leaves the device — the
+  Flask app binds 127.0.0.1 and there is no TLS to terminate. Opening cleartext
+  globally (usesCleartextTraffic="true") would also permit it to every host on
+  the internet, so it stays off in the manifest and is re-enabled here for the
+  two loopback names and nothing else.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

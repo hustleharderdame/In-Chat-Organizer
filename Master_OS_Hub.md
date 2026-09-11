@@ -11,6 +11,7 @@ parent_node: "[[Master_OS_Hub]]"
 linked_nodes:
   - "[[Chat_Root_Organizer_Service]]"
   - "[[Chat_Root_Organizer_Bridge_Block]]"
+  - "[[Chat_Root_Organizer_Android]]"
   - "[[Claude_Code_Implementation_Report]]"
   - "[[COS_Root_Organizer_Protocol]]"
   - "[[DDB.OS]]"
@@ -25,6 +26,7 @@ repo:: In-Chat-Organizer
 
 * **Service (this repo):** [[Chat_Root_Organizer_Service]] | #domain/software
 * **Bridge format:** [[Chat_Root_Organizer_Bridge_Block]] | #domain/software
+* **Phone front-end:** [[Chat_Root_Organizer_Android]] | #domain/software #tech/pwa
 * **Build brief:** [[Claude_Code_Implementation_Report]] | #domain/software
 * **Upstream protocol:** [[COS_Root_Organizer_Protocol]] *(external node — not in this repo)*
 * **Host stack:** [[DDB.OS]] *(external node — Flask + SQLite at 127.0.0.1:8410)*

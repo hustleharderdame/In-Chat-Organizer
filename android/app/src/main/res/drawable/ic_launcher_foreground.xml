@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The graph glyph, kept inside the 72x72 adaptive-icon safe zone (inset 18)
+     so no launcher mask can clip a node. Mirrors chat_organizer/web/icons. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- edges -->
+    <path
+        android:strokeColor="#6CC4B2"
+        android:strokeWidth="3.4"
+        android:strokeLineCap="round"
+        android:pathData="M54,36 L34,71 M54,36 L74,71 M34,71 L74,71" />
+
+    <!-- child nodes -->
+    <path android:fillColor="#E8A33D"
+        android:pathData="M27.5,71 a6.5,6.5 0 1,0 13,0 a6.5,6.5 0 1,0 -13,0 Z" />
+    <path android:fillColor="#E8A33D"
+        android:pathData="M67.5,71 a6.5,6.5 0 1,0 13,0 a6.5,6.5 0 1,0 -13,0 Z" />
+    <!-- inner node -->
+    <path android:fillColor="#E8A33D"
+        android:pathData="M49.5,54 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 Z" />
+    <!-- root node -->
+    <path android:fillColor="#F5E8D2"
+        android:pathData="M46,36 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0 Z" />
+</vector>

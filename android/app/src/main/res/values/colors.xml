@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches the PWA's dark palette so there is no flash of a different
+         colour between the launcher, the splash and the WebView. -->
+    <color name="slate">#151922</color>
+    <color name="slate_deep">#0F1218</color>
+    <color name="amber">#E8A33D</color>
+    <color name="teal">#6CC4B2</color>
+    <color name="ink">#E8EAEF</color>
+    <color name="ink_soft">#A2AAB9</color>
+</resources>

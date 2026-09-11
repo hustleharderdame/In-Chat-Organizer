@@ -15,6 +15,7 @@ linked_nodes:
   - "[[Master_OS_Hub]]"
   - "[[Claude_Code_Implementation_Report]]"
   - "[[Chat_Root_Organizer_Bridge_Block]]"
+  - "[[Chat_Root_Organizer_Android]]"
   - "[[COS_Root_Organizer_Protocol]]"
   - "[[DDB.OS]]"
   - "[[Canon_ID_System]]"
@@ -44,7 +45,8 @@ by [[COS_Root_Organizer_Protocol]]. Not a new system, not a new process.
 | `chat_organizer/bridge.py` | [[Chat_Root_Organizer_Bridge_Block]] paste-back | no |
 | `chat_organizer/retrieval.py` | triggers, keywords, providers, ambiguity | via `upsert_node` |
 | `chat_organizer/service.py` | `Organizer` — routes a turn, owns the connection | via `upsert_node` |
-| `chat_organizer/api.py` | the two read endpoints | reads only |
+| `chat_organizer/api.py` | HTTP surface + the PWA shell | reads + guarded writes |
+| `chat_organizer/web/` | the installable front-end — [[Chat_Root_Organizer_Android]] | no |
 
 ## 2. Data Model
 
@@ -112,10 +114,14 @@ retrieval layer and the parser's reconciliation.
 
 route:: `GET /nodes?tag=status/active` → Dataview **TABLE** equivalent
 route:: `GET /nodes/tasks?open=true&group_by=parent_root` → Dataview **TASK** equivalent
+route:: `POST /ingest` · `POST /ingest/answer` → capture from the phone (loopback-only)
+route:: `GET /` · `/manifest.webmanifest` · `/sw.js` · `/icons/…` → the PWA shell
 
-Read-only by design: ingestion is a Python call the chat host makes, and the
-HTTP surface exists so Dame can look at the graph. Plain SQL over `graph` covers
-both Dataview examples — no new query language.
+Plain SQL over `graph` covers both Dataview examples — no new query language.
+
+The report specified a read-only surface with ingestion as a Python call. The
+write routes are a deliberate expansion so the phone front-end can capture;
+they refuse any non-loopback peer. Details: [[Chat_Root_Organizer_Android]].
 
 ```python
 from flask import Flask
@@ -146,7 +152,16 @@ org.provider = HostToolProvider(conversation_search, recent_chats, read_conversa
 org.answer_ambiguity(result.questions[0].candidates[1])
 ```
 
-## 7. Tests
+## 7. Front-end
+
+The installable PWA and the Android WebView wrapper are specified in
+[[Chat_Root_Organizer_Android]] and are not restated here.
+
+```bash
+python3 tools/serve_demo.py 8410     # seeded graph, no DDB.OS database needed
+```
+
+## 8. Tests
 
 ```bash
 python3 -m pytest tests -q

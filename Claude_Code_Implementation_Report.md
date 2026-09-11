@@ -14,6 +14,7 @@ parent_node: "[[Master_OS_Hub]]"
 linked_nodes:
   - "[[Chat_Root_Organizer_Service]]"
   - "[[Chat_Root_Organizer_Bridge_Block]]"
+  - "[[Chat_Root_Organizer_Android]]"
   - "[[COS_Root_Organizer_Protocol]]"
   - "[[DDB.OS]]"
   - "[[Canon_ID_System]]"
@@ -45,6 +46,19 @@ status:: #status/active
 | 5 | `search_past_chats` → host tools (path 1) | **built** |
 | 6 | The two read endpoints | **built** |
 | 7 | Standalone offline fallback (path 3) | **deferred — awaiting Dame** |
+| + | Phone front-end (PWA + Android project) | **added** — see [[Chat_Root_Organizer_Android]] |
+
+### Scope added after the brief
+
+Dame asked for an Android APK. The brief's HTTP surface was read-only, which
+would have made the phone app a viewer only, so `POST /ingest` and
+`POST /ingest/answer` were added — refusing any non-loopback peer. The APK
+itself could not be compiled in that session (no network route to
+`dl.google.com` for the Android SDK), so the repo carries a complete, validated
+Gradle project plus an installable PWA that works today.
+Building it also surfaced a latent bug the test client could never catch: the
+shared SQLite connection was not usable from a WSGI worker thread. See
+[[Chat_Root_Organizer_Android]] Section 5.
 
 ### Drift notes against this brief
 

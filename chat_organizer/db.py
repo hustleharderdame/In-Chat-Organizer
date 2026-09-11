@@ -83,11 +83,23 @@ END;
 """
 
 
-def connect(path: str = ":memory:") -> sqlite3.Connection:
-    """Open the DDB.OS SQLite DB and make sure the organizer schema exists."""
-    conn = sqlite3.connect(path)
+def connect(path: str = ":memory:", *, check_same_thread: bool = False) -> sqlite3.Connection:
+    """Open the DDB.OS SQLite DB and make sure the organizer schema exists.
+
+    ``check_same_thread`` defaults to False because any WSGI server — including
+    the Flask dev server DDB.OS runs — dispatches requests on worker threads,
+    while the connection is opened once at startup. Serialising concurrent use
+    is then the connection owner's job; :class:`chat_organizer.service.Organizer`
+    holds a lock for exactly this reason.
+
+    ``busy_timeout`` matters because the organizer shares one SQLite file with
+    the rest of DDB.OS: without it, a write held by another component surfaces
+    here as an immediate "database is locked" instead of a short wait.
+    """
+    conn = sqlite3.connect(path, check_same_thread=check_same_thread)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA busy_timeout = 5000")
     migrate(conn)
     return conn
 

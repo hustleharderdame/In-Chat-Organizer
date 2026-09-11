@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chat Root Organizer</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#151922">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{
+  --bg:#f6f6f4; --surface:#ffffff; --surface-2:#eceae5; --line:#dbd8d1;
+  --ink:#1b1f27; --ink-soft:#5d6472; --ink-faint:#8b91a0;
+  --accent:#b57715; --accent-ink:#ffffff; --teal:#2f7f70; --danger:#a33a2c;
+  --radius:14px; --tap:44px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1218; --surface:#151922; --surface-2:#1d222d; --line:#2a303d;
+    --ink:#e8eaef; --ink-soft:#a2aab9; --ink-faint:#6f7889;
+    --accent:#e8a33d; --accent-ink:#151922; --teal:#6cc4b2; --danger:#e07a6a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1218; --surface:#151922; --surface-2:#1d222d; --line:#2a303d;
+  --ink:#e8eaef; --ink-soft:#a2aab9; --ink-faint:#6f7889;
+  --accent:#e8a33d; --accent-ink:#151922; --teal:#6cc4b2; --danger:#e07a6a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%;
+  padding-bottom:calc(64px + var(--safe-b));
+}
+h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+button{font:inherit;color:inherit;cursor:pointer}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:20;background:var(--bg);
+  border-bottom:1px solid var(--line);
+  padding:14px 16px 10px;
+}
+.bar{display:flex;align-items:center;gap:10px}
+.mark{width:26px;height:26px;flex:none}
+h1{font-size:16px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex:none}
+.dot.up{background:var(--teal)} .dot.down{background:var(--danger)}
+.status-txt{font-size:12px;color:var(--ink-faint)}
+
+/* ---------- filters ---------- */
+.filters{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:2px;
+  scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{
+  flex:none;border:1px solid var(--line);background:var(--surface);
+  border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--ink-soft);
+  white-space:nowrap;
+}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+
+/* ---------- layout ---------- */
+main{padding:14px 16px 24px;max-width:760px;margin:0 auto}
+.hint{color:var(--ink-faint);font-size:13px;margin:2px 0 12px}
+
+/* ---------- node card ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:13px 14px;margin-bottom:10px;
+}
+.card-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.badge{
+  font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 7px;border-radius:5px;background:var(--surface-2);color:var(--ink-soft);
+}
+.badge.decision{background:#e8a33d22;color:var(--accent)}
+.badge.task{background:#6cc4b222;color:var(--teal)}
+.badge.question{background:#8b7ad422;color:#8b7ad4}
+.badge.spec{background:#5b8fd422;color:#5b8fd4}
+.badge.relationship{background:#d47a9a22;color:#d47a9a}
+.badge.root{background:var(--ink);color:var(--bg)}
+.slug{font-size:12px;color:var(--ink-faint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.summary{margin:0 0 8px;font-size:14.5px}
+.body{margin:0 0 9px;white-space:pre-wrap;color:var(--ink-soft);font-size:13.5px}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:11px;color:var(--ink-faint);background:var(--surface-2);
+  border-radius:4px;padding:2px 6px;font-family:ui-monospace,Menlo,monospace}
+.meta{margin-top:8px;font-size:11.5px;color:var(--ink-faint);
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.canon{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;word-break:break-all}
+
+/* ---------- groups ---------- */
+.group{margin-bottom:18px}
+.group-head{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;
+  padding-bottom:6px;border-bottom:1px solid var(--line)}
+.group-head h2{
+  font-size:12.5px;letter-spacing:.02em;color:var(--ink-soft);
+  min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.group-head .canon{flex:none;color:var(--ink-faint)}
+.count{font-size:11.5px;color:var(--ink-faint);flex:none}
+
+/* ---------- capture ---------- */
+textarea{
+  width:100%;min-height:150px;resize:vertical;padding:12px;
+  background:var(--surface);color:var(--ink);
+  border:1px solid var(--line);border-radius:var(--radius);
+  font:14px/1.55 system-ui,sans-serif;
+}
+textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{
+  min-height:var(--tap);padding:0 18px;border-radius:11px;border:1px solid var(--line);
+  background:var(--surface);font-weight:600;font-size:14px;
+}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.5}
+.notice{
+  border:1px solid var(--line);border-left:3px solid var(--accent);
+  background:var(--surface);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13.5px;
+}
+.notice.bad{border-left-color:var(--danger)}
+.notice.good{border-left-color:var(--teal)}
+.notice h3{font-size:13px;margin-bottom:5px}
+.cand{display:block;width:100%;text-align:left;margin-top:7px;padding:11px 12px;
+  border:1px solid var(--line);border-radius:10px;background:var(--surface-2);font-size:13.5px}
+.empty{color:var(--ink-faint);text-align:center;padding:48px 16px;font-size:14px}
+
+/* ---------- tab bar ---------- */
+nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  display:flex;background:var(--surface);border-top:1px solid var(--line);
+  padding-bottom:var(--safe-b);
+}
+nav button{
+  flex:1;min-height:var(--tap);border:0;background:none;padding:9px 4px 10px;
+  font-size:11.5px;font-weight:600;color:var(--ink-faint);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+nav button[aria-current="page"]{color:var(--accent)}
+nav svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 4.5 5 18h14L12 4.5Z" fill="none" stroke="var(--teal)" stroke-width="1.7"
+            stroke-linejoin="round"/>
+      <circle cx="12" cy="4.5" r="2.7" fill="var(--ink)"/>
+      <circle cx="5" cy="18" r="2.4" fill="var(--accent)"/>
+      <circle cx="19" cy="18" r="2.4" fill="var(--accent)"/>
+      <circle cx="12" cy="12.4" r="1.7" fill="var(--accent)"/>
+    </svg>
+    <h1 id="title">Graph</h1>
+    <span class="dot" id="dot"></span>
+    <span class="status-txt" id="status">checking…</span>
+  </div>
+  <div class="filters" id="filters" hidden></div>
+</header>
+
+<main>
+  <section id="view-graph">
+    <p class="hint" id="graph-hint">Every durable turn, newest first.</p>
+    <div id="graph-list"></div>
+  </section>
+
+  <section id="view-tasks" hidden>
+    <p class="hint">Open tasks, grouped by root node.</p>
+    <div id="tasks-list"></div>
+  </section>
+
+  <section id="view-capture" hidden>
+    <p class="hint">Paste a bridge block, or just type a thought — the organizer
+      classifies it and files it.</p>
+    <textarea id="capture-text" placeholder="We're going with flat per-trip pricing…
+
+or paste a ===COS-BRIDGE-V1=== block here"></textarea>
+    <div class="row">
+      <button class="btn primary" id="capture-send">Capture</button>
+      <button class="btn" id="capture-clear">Clear</button>
+    </div>
+    <div id="capture-out"></div>
+  </section>
+</main>
+
+<nav>
+  <button id="tab-graph" aria-current="page">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/>
+    <circle cx="19" cy="19" r="2.5"/><path d="M10.5 7.2 6.3 16.6M13.5 7.2l4.2 9.4M7.5 19h9"/></svg>
+    Graph
+  </button>
+  <button id="tab-tasks">
+    <svg viewBox="0 0 24 24"><path d="M4 6.5h11M4 12h11M4 17.5h7"/>
+    <path d="m17.5 15.5 2 2 3.5-4"/></svg>
+    Tasks
+  </button>
+  <button id="tab-capture">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    Capture
+  </button>
+</nav>
+
+<script>
+const $ = s => document.querySelector(s);
+const api = p => new URL(p, location.href).toString();
+let activeTag = null, online = false;
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function when(iso){
+  if(!iso) return "";
+  const then = new Date(iso), mins = Math.round((Date.now() - then) / 60000);
+  if (isNaN(mins)) return "";
+  if (mins < 1) return "just now";
+  if (mins < 60) return mins + "m ago";
+  if (mins < 1440) return Math.round(mins/60) + "h ago";
+  if (mins < 10080) return Math.round(mins/1440) + "d ago";
+  return then.toLocaleDateString();
+}
+
+async function get(path){
+  const r = await fetch(api(path), {headers:{"Accept":"application/json"}});
+  if(!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+async function post(path, body){
+  const r = await fetch(api(path), {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(body)
+  });
+  const data = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error(data.error || ("HTTP " + r.status));
+  return data;
+}
+
+/* ---------- health ---------- */
+async function ping(){
+  try{
+    await get("healthz");
+    online = true; $("#dot").className = "dot up"; $("#status").textContent = "connected";
+  }catch{
+    online = false; $("#dot").className = "dot down"; $("#status").textContent = "server down";
+  }
+  return online;
+}
+
+function offlinePanel(){
+  return `<div class="notice bad"><h3>Can't reach the organizer</h3>
+    The Flask app isn't answering on <code>${esc(location.host)}</code>.
+    Start it in Termux, then pull to refresh:
+    <div class="tag" style="margin-top:8px;display:inline-block">python3 -m flask --app ddbos run --port 8410</div></div>`;
+}
+
+/* ---------- rendering ---------- */
+function nodeCard(n){
+  const tags = (n.tags || []).map(t =>
+    `<span class="tag">${esc(t)}</span>`).join("");
+  const body = (n.body && n.body !== n.summary)
+    ? `<p class="body">${esc(n.body.length > 320 ? n.body.slice(0,320) + "…" : n.body)}</p>` : "";
+  const src = n.source_chat ? `<span>· ${esc(n.source_chat)}</span>` : "";
+  return `<article class="card">
+    <div class="card-top">
+      <span class="badge ${esc(n.node_type)}">${esc(n.node_type)}</span>
+      <span class="slug">${esc(n.node_id)}</span>
+    </div>
+    <p class="summary">${esc(n.summary || n.node_id)}</p>
+    ${body}
+    <div class="tags">${tags}</div>
+    <div class="meta"><span>${esc(when(n.updated_at))}</span>${src}
+      <span class="canon">${esc(n.canon_id)}</span></div>
+  </article>`;
+}
+
+function renderFilters(nodes){
+  const box = $("#filters");
+  const seen = new Map();
+  nodes.forEach(n => (n.tags || []).forEach(t => seen.set(t, (seen.get(t) || 0) + 1)));
+  const tags = [...seen.entries()].sort((a,b) => b[1]-a[1]).slice(0,14).map(e => e[0]);
+  if(!tags.length){ box.hidden = true; return; }
+  box.hidden = false;
+  box.innerHTML = `<button class="chip" aria-pressed="${activeTag===null}" data-tag="">All</button>` +
+    tags.map(t => `<button class="chip" aria-pressed="${activeTag===t}" data-tag="${esc(t)}">${esc(t)}</button>`).join("");
+  box.querySelectorAll(".chip").forEach(c => c.onclick = () => {
+    activeTag = c.dataset.tag || null;
+    loadGraph();
+  });
+}
+
+async function loadGraph(){
+  const list = $("#graph-list");
+  if(!await ping()){ list.innerHTML = offlinePanel(); $("#filters").hidden = true; return; }
+  list.innerHTML = `<p class="empty">Loading…</p>`;
+  try{
+    const all = await get("nodes?limit=200");
+    renderFilters(all.nodes);
+    const shown = activeTag
+      ? all.nodes.filter(n => (n.tags || []).includes(activeTag))
+      : all.nodes;
+    $("#graph-hint").textContent = activeTag
+      ? `${shown.length} node${shown.length===1?"":"s"} tagged ${activeTag}`
+      : `${all.count} node${all.count===1?"":"s"}, newest first.`;
+    list.innerHTML = shown.length
+      ? shown.map(nodeCard).join("")
+      : `<p class="empty">Nothing here yet.</p>`;
+  }catch(e){ list.innerHTML = `<div class="notice bad">${esc(e.message)}</div>`; }
+}
+
+async function loadTasks(){
+  const list = $("#tasks-list");
+  if(!await ping()){ list.innerHTML = offlinePanel(); return; }
+  list.innerHTML = `<p class="empty">Loading…</p>`;
+  try{
+    // Groups come back keyed by the root's canon ID; show the root's human
+    // name instead — a bare canon ID is unreadable as a heading.
+    const [data, roots] = await Promise.all([
+      get("nodes/tasks?open=true&group_by=parent_root"),
+      get("nodes?type=root&limit=200").catch(() => ({nodes: []})),
+    ]);
+    const nameOf = new Map((roots.nodes || []).map(r => [r.canon_id, r.summary || r.node_id]));
+
+    const groups = Object.entries(data.groups || {});
+    if(!groups.length){ list.innerHTML = `<p class="empty">No open tasks.</p>`; return; }
+    list.innerHTML = groups.map(([key, nodes]) => {
+      const named = key === "ungrouped";
+      const label = named ? "No root node" : (nameOf.get(key) || key);
+      const canon = named ? "" : `<span class="canon">${esc(key.split(".").slice(0,2).join("."))}…</span>`;
+      return `<section class="group">
+        <div class="group-head">
+          <h2>${esc(label)}</h2>${canon}
+          <span class="count">${nodes.length}</span>
+        </div>
+        ${nodes.map(nodeCard).join("")}
+      </section>`;
+    }).join("");
+  }catch(e){ list.innerHTML = `<div class="notice bad">${esc(e.message)}</div>`; }
+}
+
+/* ---------- capture ---------- */
+function renderResult(res){
+  const out = $("#capture-out");
+  let html = "";
+
+  if(res.written && res.written.length){
+    html += `<div class="notice good"><h3>Filed ${res.written.length}
+      node${res.written.length===1?"":"s"} via the ${esc(res.path)} path</h3></div>`;
+    html += res.written.map(nodeCard).join("");
+  }
+
+  (res.questions || []).forEach((q, qi) => {
+    html += `<div class="notice"><h3>Needs your call</h3>${esc(q.question)}
+      ${(q.candidates||[]).map((c,ci) =>
+        `<button class="cand" data-q="${qi}" data-c="${ci}">
+           <strong>${esc(c.node_id || c.title || c.chat_id || c.canon_id)}</strong><br>
+           ${esc(c.summary || c.excerpt || "")}
+         </button>`).join("")}</div>`;
+  });
+
+  if(!html) html = `<div class="notice">Nothing durable in that — it was
+    classified as filler and skipped.</div>`;
+  out.innerHTML = html;
+
+  out.querySelectorAll(".cand").forEach(btn => btn.onclick = async () => {
+    const chosen = res.questions[+btn.dataset.q].candidates[+btn.dataset.c];
+    btn.disabled = true;
+    try{
+      const r = await post("ingest/answer", {chosen});
+      out.innerHTML = `<div class="notice good"><h3>Filed</h3></div>` + nodeCard(r.node);
+    }catch(e){ out.innerHTML = `<div class="notice bad">${esc(e.message)}</div>`; }
+  });
+}
+
+async function capture(){
+  const text = $("#capture-text").value.trim();
+  if(!text) return;
+  const btn = $("#capture-send");
+  btn.disabled = true; btn.textContent = "Filing…";
+  try{
+    const res = await post("ingest", {text, source_chat: "phone"});
+    $("#capture-text").value = "";
+    renderResult(res);
+  }catch(e){
+    $("#capture-out").innerHTML = `<div class="notice bad"><h3>Not filed</h3>${esc(e.message)}</div>`;
+  }finally{ btn.disabled = false; btn.textContent = "Capture"; }
+}
+
+/* ---------- tabs ---------- */
+const TABS = {
+  graph:   {title:"Graph",   view:"#view-graph",   load:loadGraph},
+  tasks:   {title:"Tasks",   view:"#view-tasks",   load:loadTasks},
+  capture: {title:"Capture", view:"#view-capture", load:ping},
+};
+function show(name){
+  Object.entries(TABS).forEach(([k, t]) => {
+    $(t.view).hidden = k !== name;
+    $("#tab-" + k).setAttribute("aria-current", k === name ? "page" : "false");
+  });
+  $("#title").textContent = TABS[name].title;
+  $("#filters").hidden = name !== "graph";
+  try{ localStorage.setItem("cos.tab", name); }catch{}
+  TABS[name].load();
+}
+Object.keys(TABS).forEach(k => $("#tab-" + k).onclick = () => show(k));
+$("#capture-send").onclick = capture;
+$("#capture-clear").onclick = () => { $("#capture-text").value = ""; $("#capture-out").innerHTML = ""; };
+
+let start = "graph";
+try{ start = localStorage.getItem("cos.tab") || "graph"; }catch{}
+show(TABS[start] ? start : "graph");
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>

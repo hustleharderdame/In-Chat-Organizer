@@ -18,5 +18,10 @@ dev = ["pytest>=7.0", "flask>=2.0"]
 [tool.setuptools]
 packages = ["chat_organizer"]
 
+[tool.setuptools.package-data]
+# The PWA shell ships with the package — the Flask blueprint serves it from
+# inside chat_organizer/web, so it must survive an install.
+chat_organizer = ["web/*.html", "web/*.js", "web/*.webmanifest", "web/icons/*.png"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
