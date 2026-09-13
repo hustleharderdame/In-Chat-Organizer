@@ -1,0 +1,43 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",       "x": 0,    "y": 0,    "w": 390, "h": 844, "title": "Period status" },
+    { "file": "PeriodSetup.dc.html","x": 470,  "y": 0,    "w": 390, "h": 844, "title": "1 · Set up period" },
+    { "file": "Ingest.dc.html",     "x": 940,  "y": 0,    "w": 390, "h": 844, "title": "2 · Ingest statements" },
+    { "file": "Ledger.dc.html",     "x": 1410, "y": 0,    "w": 390, "h": 844, "title": "3 · Ledger" },
+    { "file": "Queue.dc.html",      "x": 0,    "y": 1120, "w": 390, "h": 844, "title": "4 · Exception queue" },
+    { "file": "Resolve.dc.html",    "x": 470,  "y": 1120, "w": 390, "h": 844, "title": "5 · Resolve an item" },
+    { "file": "FormMap.dc.html",    "x": 940,  "y": 1120, "w": 390, "h": 844, "title": "6 · Map to 6233" },
+    { "file": "Submission.dc.html", "x": 1410, "y": 1120, "w": 390, "h": 844, "title": "7 · How to file" }
+  ],
+  "annotations": [
+    {
+      "id": "ia-spine",
+      "x": 0,
+      "y": -232,
+      "w": 860,
+      "text": "THE CHANGE\n\nThe old flow was a 6-step form wizard: onboarding, progress bar, Claimant Information, submit.\n\nHere the form is the LAST thing, and it is locked. The spine is the reporting period, and the tabs are Period / Ledger / Queue / Form — so the queue is a destination, not a footnote.\n\nHome is not a progress bar. It is the two accounts, each with its own arithmetic and its own MATCH or VARIANCE verdict."
+    },
+    {
+      "id": "two-parties",
+      "x": 940,
+      "y": -232,
+      "w": 860,
+      "text": "TWO PARTIES, TWO ACCOUNTS\n\n'Claimant Information' collapsed a payee and a beneficiary into one person. Setup now names both: FILING AS (you) and ON BEHALF OF (them), with relationship and adult/minor, which change what the form asks.\n\nThe accounts never merge either. Regular and dedicated ingest, classify and reconcile on separate tracks, and the ledger makes you pick one — there is no combined view to misread."
+    },
+    {
+      "id": "queue-is-core",
+      "x": 0,
+      "y": 934,
+      "w": 860,
+      "text": "THE QUEUE IS THE PRODUCT\n\nEverything upstream is arithmetic the app can do alone. This is the only part that needs what you know.\n\nTwo kinds of exception share the queue and must not look alike: TXN-184 is a transaction missing evidence; VAR-REG-01 is the account itself not tying by $126. One is answered with a receipt, the other with an explanation.\n\nOn the resolve screen the statement fields sit in a locked grey block. Your answer is appended as a new event — the original row is never rewritten."
+    },
+    {
+      "id": "gate",
+      "x": 940,
+      "y": 934,
+      "w": 860,
+      "text": "THE GATE, AND THE OFF-RAMP\n\nEvery answered field carries the sum that produced it and the transaction count behind it. Two fields are blank on purpose, each naming the exception holding it up — the app will not print a number it cannot trace.\n\nFiling is a recommendation, not a button. Two open judgment calls means in person, and the screen says which two. Online is greyed with its real reason: one sitting, no attachments, nowhere to explain a variance."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}

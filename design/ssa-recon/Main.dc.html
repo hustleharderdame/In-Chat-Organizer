@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+  <style>
+    body { margin: 0; }
+    * { box-sizing: border-box; }
+    a { color: #1F3D33; } a:hover { color: #16302A; }
+  </style>
+</helmet>
+
+<div style="width: 390px; height: 844px; display: flex; flex-direction: column; background: #F6F6F4; font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #16201C; overflow: hidden;">
+
+  <div style="background: #1F3D33; padding-top: 44px;">
+    <div style="display: flex; flex-direction: column; gap: 14px; padding: 14px 20px 16px 20px;">
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; font-size: 9.5px; letter-spacing: 0.1em; color: #8FAE9E;">REPORT PERIOD</div>
+          <div style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 600; color: #FFFFFF; line-height: 1.15;">Sep 1, 2025 – Aug 31, 2026</div>
+          <div style="font-size: 11.5px; color: #A9C2B4;">Beneficiary [name] · adult · your [relationship]</div>
+        </div>
+        <div style="width: 40px; height: 40px; border-radius: 999px; background: #2C5647; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#CFE0D5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px;">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="height: 3px; border-radius: 999px; background: #6E9A85;"></div>
+          <div style="font-size: 8.5px; color: #8FAE9E; letter-spacing: 0.01em;">Ingest</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="height: 3px; border-radius: 999px; background: #6E9A85;"></div>
+          <div style="font-size: 8.5px; color: #8FAE9E;">Classify</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="height: 3px; border-radius: 999px; background: #D9A441;"></div>
+          <div style="font-size: 8.5px; color: #E4BE73; font-weight: 600;">Reconcile</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="height: 3px; border-radius: 999px; background: #FFFFFF;"></div>
+          <div style="font-size: 8.5px; color: #FFFFFF; font-weight: 600;">Resolve</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="height: 3px; border-radius: 999px; background: #34594B;"></div>
+          <div style="font-size: 8.5px; color: #6E8A7C;">Map</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; overflow: hidden;">
+
+    <div style="display: flex; flex-direction: column; gap: 9px; background: #FFFFFF; border: 1px solid #DBD8D1; border-radius: 14px; padding: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <div style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: 0.07em; color: #5A655F;">REGULAR · ACCT-REG</div>
+        <div style="display: flex; align-items: center; gap: 5px; background: #F9EBE8; border: 1px solid #E8C4BC; border-radius: 999px; padding: 3px 9px;">
+          <span style="width: 6px; height: 6px; border-radius: 999px; background: #A33A2C; display: block;"></span>
+          <span style="font-size: 9.5px; font-weight: 600; color: #A33A2C; letter-spacing: 0.04em;">VARIANCE</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; font-size: 25px; font-weight: 500; letter-spacing: -0.02em;">$958.42</div>
+        <div style="font-size: 10.5px; color: #8A938D; text-align: right; line-height: 1.3;">actual bank<br>vs $1,084.42 expected</div>
+      </div>
+      <div style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; font-size: 9.5px; color: #8A938D; letter-spacing: -0.01em;">1,240.00 + 11,388.00 − 11,543.58 = 1,084.42</div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #F9EBE8; border-radius: 9px; padding: 8px 10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A33A2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        <div style="font-size: 11px; color: #A33A2C; font-weight: 500;">−$126.00 doesn't tie. Needs an explanation.</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 9px; background: #FFFFFF; border: 1px solid #DBD8D1; border-radius: 14px; padding: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <div style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: 0.07em; color: #5A655F;">DEDICATED · ACCT-DED</div>
+        <div style="display: flex; align-items: center; gap: 5px; background: #E7EFE8; border: 1px solid #C6DACB; border-radius: 999px; padding: 3px 9px;">
+          <span style="width: 6px; height: 6px; border-radius: 999px; background: #2E6B4F; display: block;"></span>
+          <span style="font-size: 9.5px; font-weight: 600; color: #2E6B4F; letter-spacing: 0.04em;">MATCH</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+        <div style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; font-size: 25px; font-weight: 500; letter-spacing: -0.02em;">$1,570.00</div>
+        <div style="font-size: 10.5px; color: #8A938D; text-align: right; line-height: 1.3;">actual bank<br>ties to the penny</div>
+      </div>
+      <div style="font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; font-size: 9.5px; color: #8A938D; letter-spacing: -0.01em;">2,000.00 + 0.00 − 430.00 = 1,570.00</div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #FBF2E1; border-radius: 9px; padding: 8px 10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B57715" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <div style="font-size: 11px; color: #8A5F11; font-weight: 500;">Balanced, but 1 purchase still unproven.</div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 11px; background: #FFFFFF; border: 1px solid #DBD8D1; border-radius: 14px; padding: 13px 14px;">
+      <div style="display: flex; gap: 3px; flex-shrink: 0;">
+        <span style="width: 9px; height: 9px; border-radius: 999px; background: #A33A2C; display: block;"></span>
+        <span style="width: 9px; height: 9px; border-radius: 999px; background: #A33A2C; display: block;"></span>
+        <span style="width: 9px; height: 9px; border-radius: 999px; background: #B57715; display: block;"></span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 1px; flex-grow: 1;">
+        <div style="font-size: 13px; font-weight: 600;">2 blocking, 1 to review</div>
+        <div style="font-size: 11px; color: #8A938D;">Only you can answer these</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A938D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px; background: #ECEAE5; border: 1px dashed #C9C5BA; border-radius: 14px; padding: 13px 14px;">
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A938D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <div style="font-size: 13px; font-weight: 600; color: #5A655F;">Map to SSA-6233-BK</div>
+      </div>
+      <div style="font-size: 11px; color: #8A938D; line-height: 1.4;">Locked until both accounts reconcile and every blocking item clears. No figure reaches the form without a transaction behind it.</div>
+    </div>
+
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid #DBD8D1; background: #FFFFFF; padding: 8px 8px 26px 8px;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#1F3D33" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      <div style="font-size: 9.5px; font-weight: 600; color: #1F3D33;">Period</div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#8A938D" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+      <div style="font-size: 9.5px; color: #8A938D;">Ledger</div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; position: relative;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#8A938D" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+      <div style="font-size: 9.5px; color: #8A938D;">Queue</div>
+      <div style="position: absolute; top: 2px; left: 50%; margin-left: 5px; min-width: 16px; height: 16px; border-radius: 999px; background: #A33A2C; color: #FFFFFF; font-size: 9.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; padding: 0 4px;">3</div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#C2BFB6" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <div style="font-size: 9.5px; color: #C2BFB6;">Form</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>
