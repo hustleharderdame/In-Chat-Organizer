@@ -15,6 +15,7 @@ linked_nodes:
   - "[[Chat_Root_Organizer_Android]]"
   - "[[Claude_Code_Implementation_Report]]"
   - "[[SSA_RECON]]"
+  - "[[SSA_RECON_App_UI]]"
 ---
 
 # In-Chat-Organizer
@@ -31,6 +32,7 @@ statement of record lives in the node it links to.
 | The phone app (PWA + APK project) | [[Chat_Root_Organizer_Android]] |
 | The original build brief + delivery ledger | [[Claude_Code_Implementation_Report]] |
 | The SSA rep-payee reconciliation runtime (SSA-6233-BK) | [[SSA_RECON]] |
+| The SSA app's screens and design tokens | [[SSA_RECON_App_UI]] |
 
 ```bash
 python3 -m pytest tests -q

@@ -1,7 +1,7 @@
 ---
 node_id: "ssa_recon_master"
 node_type: "system_spec"
-version: "4.0.0"
+version: "4.1.0"
 status: "active"
 single_source: true
 tags:
@@ -17,6 +17,7 @@ linked_nodes:
   - "[[Exception_Queue]]"
   - "[[Annual_Records_Checklist]]"
   - "[[Accountant_Notes]]"
+  - "[[SSA_RECON_App_UI]]"
 ---
 
 # [[SSA_RECON]] — In-Chat Runtime
@@ -24,6 +25,11 @@ linked_nodes:
 owner:: [[Damien_Brock]]
 supersedes:: HLBIDX.00.SSA_RECON.MASTER_NODE.v3.3.0
 case_id:: CASE-2026-001
+
+**v4.1.0 changelog:** Section 13 rebuilt as a tiered gathering sheet — Tier 1
+gates the arithmetic, Tier 2 the form, Tier 3 the exception count — with the
+two accounts collected separately and the predictable exception sources named
+up front. Mobile surface specified in [[SSA_RECON_App_UI]].
 
 **v4.0.0 changelog:** reconciled against [[BFR_v3.0.0]] (Universal
 Beneficiary Financial Reconciliation & Audit Builder) — this node is now
@@ -264,18 +270,80 @@ DEDICATED:  Beginning $2,000 + Deposits $0 − Spent $430 = Expected $1,570
 
 `map to 6233` → the Section 9 table filled with your period's actual numbers.
 
-## 13. [[Annual_Records_Checklist]] — full report-period year
+## 13. [[Annual_Records_Checklist]] — gathering sheet
 
-SSA's accounting window is typically 12 months. Gather these before Phase 1:
+SSA's accounting window is normally 12 months. Work down the tiers: Tier 1
+gates the arithmetic, Tier 2 gates the form, Tier 3 decides how many items
+land in the [[Exception_Queue]]. These boxes feed the backlog view in
+[[Master_OS_Hub]].
 
-- [ ] 12 monthly statements — regular/representative-payee account
-- [ ] 12 monthly statements — dedicated account (if applicable)
-- [ ] SSA award/benefit letters for the period (confirms amounts SSA says it paid — used to check deposits)
-- [ ] Any prior-period SSA-6233-BK confirmation of carried-forward savings balance
-- [ ] Receipts for medical, therapy, education, or job-skills purchases from the dedicated account (these need documentation, not just the bank line)
-- [ ] Receipts or explanation for any ATM/cash withdrawals over the period
-- [ ] Documentation for any large or one-off purchases (>$100 is a reasonable internal flag threshold)
-- [ ] Records of interest earned on the dedicated account, if any
+This sheet is *what to collect*. Section 11 is *what to do with it* — they
+are deliberately separate lists.
+
+### Tier 1 — without these the reconciliation cannot run
+
+Gathered per account and never merged (Section 10).
+
+**Regular account — ACCT-REG**
+
+- [ ] Opening balance at period start
+- [ ] All 12 monthly statements, no gaps
+- [ ] Closing balance at period end
+
+**Dedicated account — ACCT-DED** *(skip entirely if none exists)*
+
+- [ ] Opening balance at period start
+- [ ] All 12 monthly statements, no gaps
+- [ ] Closing balance at period end
+- [ ] Interest earned — the form asks for ending balance *including* interest
+
+One missing month breaks `Beginning + Deposits − Withdrawals = Expected` and
+there is no honest way to assert the result without it. Partial coverage is a
+blocker, not a warning.
+
+### Tier 2 — cheap to collect, gates the form rather than the math
+
+- [ ] Payee identity — you, the filer
+- [ ] Beneficiary identity — the person the funds belong to
+- [ ] Relationship between the two
+- [ ] Adult or minor beneficiary — changes which questions the form asks
+- [ ] Whether a dedicated account exists at all
+- [ ] Prior period's SSA-6233-BK — its reported savings figure is this period's opening balance
+- [ ] SSA award/benefit letters for the period — the only independent check on deposits
+
+Two of these are load-bearing in a way that is easy to miss. Without the prior
+6233 the opening balance is asserted with nothing behind it. Without the award
+letters a deposit shortfall reads as a bank discrepancy rather than a finding.
+
+### Tier 3 — evidence, in the order it pays off
+
+- [ ] Every dedicated-account debit — needs documentation, not just the bank line
+- [ ] Cash and ATM withdrawals — the purpose of each
+- [ ] Anything over $100
+- [ ] Medical, therapy, education and job-skills purchases generally
+
+Section 16's enforcement rule applies throughout: nothing reaches
+`compliance:validated` without a linked evidence object.
+
+### What reliably becomes an exception
+
+- **Cash.** A $300 ATM line is unprovable after the fact. Noting the purpose at
+  the moment of withdrawal is the one habit that changes the outcome — every
+  other record is reconstructable from paper; this one is not.
+- **Shared household expenses.** Where rent or groceries were split between your
+  funds and the beneficiary's, the allocation method is a judgment call. Settle
+  it before it reaches the form, and have the accountant confirm the
+  methodology (Section 15).
+- **General merchants.** Walmart, Target, Amazon — the line says nothing about
+  what was bought, so these classify low by design and wait for a receipt.
+- **A first tracked period.** No prior 6233 means no attested opening balance.
+  Record that fact rather than inferring a number.
+
+### Not needed
+
+- Submitting anything from this system — you review and file it yourself (Section 7)
+- Mailing supporting documents to SSA — retain two years, send only on request
+- Complete data. `UNKNOWN` is a valid resting state (Section 3)
 
 ## 14. Online vs. in-person submission
 
