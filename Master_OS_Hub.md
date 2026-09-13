@@ -13,6 +13,7 @@ linked_nodes:
   - "[[Chat_Root_Organizer_Bridge_Block]]"
   - "[[Chat_Root_Organizer_Android]]"
   - "[[Claude_Code_Implementation_Report]]"
+  - "[[SSA_RECON]]"
   - "[[COS_Root_Organizer_Protocol]]"
   - "[[DDB.OS]]"
 ---
@@ -28,6 +29,7 @@ repo:: In-Chat-Organizer
 * **Bridge format:** [[Chat_Root_Organizer_Bridge_Block]] | #domain/software
 * **Phone front-end:** [[Chat_Root_Organizer_Android]] | #domain/software #tech/pwa
 * **Build brief:** [[Claude_Code_Implementation_Report]] | #domain/software
+* **SSA rep-payee reconciliation:** [[SSA_RECON]] | #domain/financial-administration `domain:financial-administration`
 * **Upstream protocol:** [[COS_Root_Organizer_Protocol]] *(external node — not in this repo)*
 * **Host stack:** [[DDB.OS]] *(external node — Flask + SQLite at 127.0.0.1:8410)*
 
@@ -36,9 +38,16 @@ repo:: In-Chat-Organizer
 ```dataview
 TABLE version AS "Version", status AS "Status", tags AS "Tags"
 FROM ""
-WHERE contains(tags, "status/active") AND file.name != "Master_OS_Hub"
+WHERE (contains(tags, "status/active") OR contains(tags, "status:active"))
+  AND file.name != "Master_OS_Hub"
 SORT file.mtime DESC
 ```
+
+Two tag namespaces are matched on purpose. Slash-namespaced tags
+(`status/active`) are what every node in this repo carries; colon-namespaced
+tags (`status:active`) are the canon [[SSA_RECON]] v4.0.0 adopted from
+[[BFR_v3.0.0]]. Until the older nodes are converted, dropping either arm of
+this filter makes half the graph invisible to the view.
 
 ## 3. Global Active Backlog Index
 
