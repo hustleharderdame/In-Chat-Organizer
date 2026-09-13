@@ -15,6 +15,7 @@ linked_nodes:
   - "[[Claude_Code_Implementation_Report]]"
   - "[[SSA_RECON]]"
   - "[[SSA_RECON_App_UI]]"
+  - "[[SSA_RECON_Local_App]]"
   - "[[COS_Root_Organizer_Protocol]]"
   - "[[DDB.OS]]"
 ---
@@ -32,6 +33,7 @@ repo:: In-Chat-Organizer
 * **Build brief:** [[Claude_Code_Implementation_Report]] | #domain/software
 * **SSA rep-payee reconciliation:** [[SSA_RECON]] | #domain/financial-administration `domain:financial-administration`
 * **SSA mobile surface:** [[SSA_RECON_App_UI]] | `domain:financial-administration` `tech:mobile-ui`
+* **SSA offline tool:** [[SSA_RECON_Local_App]] | `domain:financial-administration` `tech:standalone-html`
 * **Upstream protocol:** [[COS_Root_Organizer_Protocol]] *(external node — not in this repo)*
 * **Host stack:** [[DDB.OS]] *(external node — Flask + SQLite at 127.0.0.1:8410)*
 

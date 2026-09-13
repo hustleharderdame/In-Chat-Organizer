@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SSA-6233-BK Reconciliation</title>
+<style>
+  :root{
+    --brand:#1F3D33; --brand-d:#16302A; --sage:#E7EFE8; --sage-b:#C6DACB;
+    --ground:#F6F6F4; --card:#FFF; --bd:#DBD8D1; --bd2:#ECEAE5;
+    --ink:#16201C; --ink2:#5A655F; --ink3:#8A938D;
+    --bad:#A33A2C; --bad-bg:#F9EBE8; --bad-b:#E8C4BC;
+    --warn:#B57715; --warn-d:#8A5F11; --warn-bg:#FBF2E1; --warn-b:#D9B463;
+    --ok:#2E6B4F;
+    --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font:14px/1.5 var(--sans)}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px 64px}
+  header{background:var(--brand);color:#fff;padding:20px 0 18px;margin-bottom:18px}
+  header .wrap{padding-bottom:0}
+  header h1{font-size:22px;color:#fff}
+  .sub{font-size:12px;color:#A9C2B4;margin-top:3px}
+  .eyebrow{font:500 10px/1 var(--mono);letter-spacing:.09em;color:var(--ink2);text-transform:uppercase}
+  nav{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 0}
+  nav button{appearance:none;border:1px solid #34594B;background:transparent;color:#C3D6CA;
+    font:600 12px var(--sans);padding:9px 14px;border-radius:999px;cursor:pointer;min-height:38px}
+  nav button[aria-current="true"]{background:#fff;color:var(--brand);border-color:#fff}
+  nav button .n{font-family:var(--mono);opacity:.75;margin-left:5px}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:12px}
+  .card.tight{padding:12px 14px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row>*{flex:1 1 220px;min-width:0}
+  .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  @media(max-width:720px){.grid2{grid-template-columns:minmax(0,1fr)}}
+  label{display:block;font-size:11px;color:var(--ink2);margin-bottom:5px}
+  input,select,textarea{width:100%;font:14px var(--sans);color:var(--ink);background:#fff;
+    border:1px solid var(--bd);border-radius:10px;padding:11px;min-height:44px}
+  textarea{font:12px/1.5 var(--mono);min-height:150px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:-1px}
+  button.btn{appearance:none;border:1px solid var(--brand);background:var(--brand);color:#fff;
+    font:600 13px var(--sans);padding:12px 16px;border-radius:10px;cursor:pointer;min-height:44px}
+  button.btn.ghost{background:#fff;color:var(--brand)}
+  button.btn.sm{padding:8px 12px;min-height:36px;font-size:12px}
+  button.btn[disabled]{background:#C2BFB6;border-color:#C2BFB6;cursor:not-allowed}
+  .mono{font-family:var(--mono)}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;
+    font:600 10px var(--mono);letter-spacing:.04em}
+  .pill.ok{background:var(--sage);color:var(--ok);border:1px solid var(--sage-b)}
+  .pill.bad{background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad-b)}
+  .pill.warn{background:var(--warn-bg);color:var(--warn-d);border:1px solid var(--warn-b)}
+  .pill.mute{background:var(--bd2);color:var(--ink2);border:1px solid var(--bd)}
+  .dot{width:8px;height:8px;border-radius:999px;display:inline-block;flex:none}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font:500 10px var(--mono);letter-spacing:.07em;color:var(--ink2);
+    text-transform:uppercase;padding:0 8px 8px;border-bottom:1px solid var(--bd2)}
+  td{padding:9px 8px;border-bottom:1px solid var(--bd2);font-size:13px;vertical-align:top}
+  td.r,th.r{text-align:right}
+  .scroll{overflow-x:auto}
+  .note{background:var(--bd2);border-radius:10px;padding:11px 12px;font-size:12px;color:var(--ink2);line-height:1.5}
+  .note.bad{background:var(--bad-bg);color:var(--bad)}
+  .note.warn{background:var(--warn-bg);color:var(--warn-d)}
+  .note.ok{background:var(--sage);color:var(--ok)}
+  .math{font:12px/1.7 var(--mono);color:var(--ink2)}
+  .math b{color:var(--ink);font-weight:600}
+  .big{font:500 26px var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .hd{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+  .stack{display:flex;flex-direction:column;gap:10px}
+  .qitem{border:1px solid var(--bd);border-radius:12px;padding:12px 13px;background:#fff}
+  .qitem.blocking{border-color:var(--bad-b)}
+  .qitem.cleared{border-color:var(--sage-b);opacity:.8}
+  .muted{color:var(--ink3);font-size:12px}
+  .hidden{display:none!important}
+  .warnbar{background:var(--warn-bg);border:1px solid var(--warn-b);color:var(--warn-d);
+    border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5;margin-bottom:12px}
+  code{font-family:var(--mono);font-size:12px;background:var(--bd2);padding:1px 5px;border-radius:4px}
+  .pass{color:var(--ok)} .fail{color:var(--bad);font-weight:600}
+  #selftest{font:12px/1.6 var(--mono);white-space:pre-wrap}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>SSA-6233-BK Reconciliation</h1>
+    <div class="sub">Representative payee accounting &middot; runs entirely on this device</div>
+    <nav id="nav"></nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ===== SETUP ===== -->
+  <section id="v-setup" class="view">
+    <div class="card">
+      <div class="hd"><h2>Reporting period</h2><span class="eyebrow">Phase 1</span></div>
+      <div class="grid2">
+        <div><label for="p-start">Period start</label><input type="date" id="p-start"></div>
+        <div><label for="p-end">Period end</label><input type="date" id="p-end"></div>
+      </div>
+      <p class="muted" style="margin:10px 0 0">Normally a 12-month window. Every figure on the form is bounded by these dates.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:8px">Filing as</div>
+        <h3 style="font-size:15px;margin-bottom:10px">You, the representative payee</h3>
+        <label for="p-payee">Your full legal name</label>
+        <input id="p-payee" placeholder="Full legal name" autocomplete="off">
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:8px">On behalf of</div>
+        <h3 style="font-size:15px;margin-bottom:10px">The beneficiary</h3>
+        <label for="p-benef">Beneficiary's full legal name</label>
+        <input id="p-benef" placeholder="Full legal name" autocomplete="off">
+        <div class="grid2" style="margin-top:10px">
+          <div><label for="p-rel">Relationship to you</label><input id="p-rel" placeholder="e.g. daughter" autocomplete="off"></div>
+          <div><label for="p-age">Adult or minor</label>
+            <select id="p-age"><option value="adult">Adult</option><option value="minor">Minor</option></select></div>
+        </div>
+        <p class="muted" style="margin:10px 0 0">These change which questions the form asks.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><h2>Accounts</h2></div>
+      <div class="grid2">
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">ACCT-REG &middot; regular accountable funds</div>
+          <label for="reg-open">Opening balance at period start</label>
+          <input id="reg-open" class="num" placeholder="$0.00" inputmode="decimal">
+          <label for="reg-close" style="margin-top:10px">Closing balance at period end</label>
+          <input id="reg-close" class="num" placeholder="$0.00" inputmode="decimal">
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">ACCT-DED &middot; dedicated account</div>
+          <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink);margin-bottom:8px">
+            <input type="checkbox" id="ded-exists" style="width:auto;min-height:0"> This beneficiary has a dedicated account
+          </label>
+          <div id="ded-fields" class="hidden">
+            <label for="ded-open">Opening balance at period start</label>
+            <input id="ded-open" class="num" placeholder="$0.00" inputmode="decimal">
+            <label for="ded-close" style="margin-top:10px">Closing balance at period end</label>
+            <input id="ded-close" class="num" placeholder="$0.00" inputmode="decimal">
+            <label for="ded-int" style="margin-top:10px">Interest earned during the period</label>
+            <input id="ded-int" class="num" placeholder="$0.00" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:12px">The two accounts reconcile separately and are never netted against each other.</div>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="btn-save-setup">Save period</button>
+      <button class="btn ghost" id="btn-example">Load the worked example</button>
+    </div>
+  </section>
+
+  <!-- ===== IMPORT ===== -->
+  <section id="v-import" class="view hidden">
+    <div class="card">
+      <div class="hd"><h2>Import transactions</h2><span class="eyebrow">Phase 1 &middot; ingest</span></div>
+      <div class="grid2">
+        <div>
+          <label for="imp-acct">Into which account</label>
+          <select id="imp-acct"><option value="REG">ACCT-REG &mdash; regular</option><option value="DED">ACCT-DED &mdash; dedicated</option></select>
+        </div>
+        <div>
+          <label for="imp-file">Statement file (CSV)</label>
+          <input type="file" id="imp-file" accept=".csv,text/csv,text/plain">
+        </div>
+      </div>
+      <label for="imp-text" style="margin-top:12px">…or paste CSV here</label>
+      <textarea id="imp-text" spellcheck="false" placeholder="date,description,amount
+2026-08-14,WALMART #2384,-83.42
+2026-08-01,SSA BENEFIT DEPOSIT,949.00"></textarea>
+      <p class="muted" style="margin:8px 0 0">Recognises common column names for date, description and amount, including
+        separate debit/credit columns. Negative or parenthesised amounts are treated as money out.</p>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="btn-import">Import</button>
+        <button class="btn ghost" id="btn-clear-txns">Remove all imported transactions</button>
+      </div>
+      <div id="imp-result"></div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><h2>Category rules</h2><span class="eyebrow">Phase 2 &middot; classify</span></div>
+      <p class="muted" style="margin:0 0 10px">Deterministic and yours. A description containing the text on the left is
+        categorised on the right. Anything unmatched stays <code>UNKNOWN</code> and goes to the queue.</p>
+      <div class="scroll"><table id="rules-tbl"><thead><tr>
+        <th>Description contains</th><th>Category</th><th class="r">&nbsp;</th></tr></thead><tbody></tbody></table></div>
+      <div class="row" style="margin-top:10px">
+        <input id="rule-pat" placeholder="e.g. KROGER" autocomplete="off">
+        <select id="rule-cat"></select>
+        <button class="btn ghost" id="btn-add-rule">Add rule</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LEDGER ===== -->
+  <section id="v-ledger" class="view hidden">
+    <div class="card">
+      <div class="hd"><h2>Ledger</h2>
+        <select id="led-acct" style="width:auto;min-width:220px">
+          <option value="REG">ACCT-REG &mdash; regular</option><option value="DED">ACCT-DED &mdash; dedicated</option></select>
+      </div>
+      <div id="led-summary"></div>
+      <div class="scroll" style="margin-top:12px"><table id="led-tbl"><thead><tr>
+        <th>Date</th><th>Description</th><th>Category</th><th class="r">Conf.</th><th class="r">Amount</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- ===== RECONCILE ===== -->
+  <section id="v-recon" class="view hidden">
+    <div class="hd"><h2 style="font-size:20px">Reconciliation</h2><span class="eyebrow">Phase 3</span></div>
+    <div id="recon-cards"></div>
+    <div class="note">Each account is proved on its own: opening + money in &minus; money out must equal the closing
+      balance the bank states. A difference is a finding, not a rounding artefact &mdash; every figure here is computed
+      in whole cents.</div>
+  </section>
+
+  <!-- ===== QUEUE ===== -->
+  <section id="v-queue" class="view hidden">
+    <div class="hd"><h2 style="font-size:20px">Exception queue</h2><span class="eyebrow">Phase 4 &middot; resolve</span></div>
+    <p class="muted" style="margin:0 0 12px">The only step that needs what you know rather than what the bank says.</p>
+    <div id="llm-panel" class="card tight"></div>
+    <div id="queue-list" class="stack"></div>
+    <div class="note" style="margin-top:12px">An unresolved item is safer than a wrong one on a form you sign under
+      penalty of perjury. Leaving something open is a valid answer.</div>
+  </section>
+
+  <!-- ===== FORM ===== -->
+  <section id="v-form" class="view hidden">
+    <div class="hd"><h2 style="font-size:20px">SSA-6233-BK</h2><span class="eyebrow">Phase 5 &middot; map</span></div>
+    <div class="warnbar">The form's question wording in this build has not been verified against the current
+      SSA-6233-BK. Check every line against the paper form SSA mailed you before transcribing anything.</div>
+    <div id="form-out"></div>
+  </section>
+
+  <!-- ===== SAVE ===== -->
+  <section id="v-save" class="view hidden">
+    <div class="card">
+      <div class="hd"><h2>Carry this period forward</h2></div>
+      <p class="muted" style="margin:0 0 12px">Nothing here is sent anywhere. Save the state file to resume later,
+        and the period node to commit alongside the rest of the graph.</p>
+      <div class="row">
+        <button class="btn" id="btn-export-json">Download state (.json)</button>
+        <button class="btn ghost" id="btn-export-md">Download period node (.md)</button>
+        <button class="btn ghost" id="btn-import-json">Load a state file</button>
+      </div>
+      <input type="file" id="file-json" accept=".json,application/json" class="hidden">
+      <div id="save-result"></div>
+    </div>
+    <div class="card">
+      <div class="hd"><h2>Self-test</h2></div>
+      <p class="muted" style="margin:0 0 10px">Checks the arithmetic, the CSV parser and the form mapping against
+        known values. Run it after any edit to this file.</p>
+      <button class="btn ghost" id="btn-selftest">Run self-test</button>
+      <div id="selftest" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================================
+   SSA-6233-BK reconciliation — single file, no server, no account.
+
+   Division of labour, deliberately:
+     - Every number and every rule below is plain deterministic JavaScript.
+     - The optional language model NEVER computes, categorises or decides.
+       It proposes a label for an unrecognised merchant string; the proposal
+       lands in the queue and is worth nothing until a person accepts it.
+
+   Money is integer cents end to end. Floating point cannot hold a ledger:
+   0.1 + 0.2 is not 0.3, and a form signed under penalty of perjury is a poor
+   place to discover that.
+   ========================================================================== */
+
+const CATEGORIES = ["HOUSING","FOOD","CLOTHING","EDUCATION","MEDICAL","THERAPY",
+                    "SENSORY","RECREATION","PERSONAL","TRANSFER","ATM_CASH","UNKNOWN"];
+
+/* Section 4B / 9: the dedicated account's narrower test. */
+const IMPAIRMENT_CATS = new Set(["MEDICAL","THERAPY","EDUCATION","SENSORY"]);
+/* Section 9: the regular account's two reported buckets. */
+const HOUSING_FOOD = new Set(["HOUSING","FOOD"]);
+const OTHER_SPEND  = new Set(["CLOTHING","EDUCATION","MEDICAL","THERAPY","SENSORY","RECREATION","PERSONAL"]);
+/* Never counted as spending on the beneficiary, and never silently bucketed. */
+const UNRESOLVED   = new Set(["UNKNOWN","ATM_CASH"]);
+
+const DEFAULT_RULES = [
+  {pat:"RENT",        cat:"HOUSING"},
+  {pat:"PROPERTY",    cat:"HOUSING"},
+  {pat:"ELECTRIC",    cat:"HOUSING"},
+  {pat:"KROGER",      cat:"FOOD"},
+  {pat:"SAFEWAY",     cat:"FOOD"},
+  {pat:"GROCER",      cat:"FOOD"},
+  {pat:"PHARMACY",    cat:"MEDICAL"},
+  {pat:"CLINIC",      cat:"MEDICAL"},
+  {pat:"THERAPY",     cat:"THERAPY"},
+  {pat:"ATM",         cat:"ATM_CASH"},
+  {pat:"WITHDRAWAL",  cat:"ATM_CASH"},
+  {pat:"TRANSFER",    cat:"TRANSFER"}
+];
+
+/* ---------------------------------------------------------------- money --- */
+
+function parseMoney(v){
+  if (v === null || v === undefined) return null;
+  if (typeof v === "number") return Number.isFinite(v) ? Math.round(v*100) : null;
+  let t = String(v).trim();
+  if (!t) return null;
+  let neg = false;
+  if (/^\(.*\)$/.test(t)) { neg = true; t = t.slice(1,-1); }     // (83.42) accounting negative
+  t = t.replace(/[$£€\s,]/g, "");
+  if (t[0] === "-") { neg = true; t = t.slice(1); }
+  else if (t[0] === "+") { t = t.slice(1); }
+  const m = t.match(/^(\d+)(?:\.(\d+))?$/);
+  if (!m) return null;
+  const whole = Number(m[1]);
+  const frac  = m[2] || "";
+  let cents;
+  if (frac.length <= 2) cents = whole*100 + Number((frac + "00").slice(0,2));
+  else                  cents = whole*100 + Math.round(Number("0." + frac) * 100);
+  return neg ? -cents : cents;
+}
+
+function fmt(c){
+  if (c === null || c === undefined) return "—";
+  const neg = c < 0, a = Math.abs(c);
+  return (neg ? "−$" : "$") + Math.floor(a/100).toLocaleString("en-US") + "." + String(a%100).padStart(2,"0");
+}
+
+/* ------------------------------------------------------------------ csv --- */
+
+function parseCSV(text){
+  const rows = []; let row = [], field = "", q = false;
+  const s = String(text).replace(/\r\n?/g, "\n");
+  for (let i = 0; i < s.length; i++){
+    const ch = s[i];
+    if (q){
+      if (ch === '"'){ if (s[i+1] === '"'){ field += '"'; i++; } else q = false; }
+      else field += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ","){ row.push(field); field = ""; }
+    else if (ch === "\n"){ row.push(field); rows.push(row); row = []; field = ""; }
+    else field += ch;
+  }
+  if (field !== "" || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(c => String(c).trim() !== ""));
+}
+
+function pickCol(headers, res){
+  for (const re of res){
+    const i = headers.findIndex(h => re.test(h));
+    if (i !== -1) return i;
+  }
+  return -1;
+}
+
+/* Turn raw CSV rows into transactions. Sign convention: negative is money out. */
+function mapRows(rows){
+  if (!rows.length) return {txns:[], skipped:0, error:"No rows found."};
+  const headers = rows[0].map(h => String(h).trim().toLowerCase());
+  const looksLikeHeader = headers.some(h => /date|desc|amount|debit|credit|payee|memo/.test(h));
+  if (!looksLikeHeader) return {txns:[], skipped:rows.length, error:"No recognisable header row (need date, description and amount)."};
+
+  const iDate = pickCol(headers, [/^date$/, /post/, /date/]);
+  const iDesc = pickCol(headers, [/^desc/, /payee/, /merchant/, /memo/, /detail/, /name/, /transaction/]);
+  const iAmt  = pickCol(headers, [/^amount$/, /^amt$/, /amount/]);
+  const iDeb  = pickCol(headers, [/debit/, /withdraw/, /money out/, /paid out/]);
+  const iCred = pickCol(headers, [/credit/, /deposit/, /money in/, /paid in/]);
+
+  if (iDate === -1 || iDesc === -1) return {txns:[], skipped:rows.length, error:"Could not find a date column and a description column."};
+  if (iAmt === -1 && iDeb === -1 && iCred === -1) return {txns:[], skipped:rows.length, error:"Could not find an amount column, or a debit/credit pair."};
+
+  const txns = []; let skipped = 0;
+  for (let r = 1; r < rows.length; r++){
+    const row = rows[r];
+    const date = String(row[iDate] ?? "").trim();
+    const desc = String(row[iDesc] ?? "").trim();
+    let cents = null;
+    if (iAmt !== -1) cents = parseMoney(row[iAmt]);
+    if (cents === null && iDeb !== -1){
+      const d = parseMoney(row[iDeb]);
+      if (d !== null && d !== 0) cents = -Math.abs(d);
+    }
+    if (cents === null && iCred !== -1){
+      const c = parseMoney(row[iCred]);
+      if (c !== null && c !== 0) cents = Math.abs(c);
+    }
+    if (!date || !desc || cents === null){ skipped++; continue; }
+    txns.push({date, desc, cents});
+  }
+  return {txns, skipped, error:null};
+}
+
+/* ------------------------------------------------------------- classify --- */
+
+/* Deterministic only. Confidence is 1 for a rule hit and 0 otherwise — there is
+   no middle, because a guess dressed as 0.58 is still a guess (Section 2). */
+function classify(desc, rules){
+  const d = String(desc).toUpperCase();
+  for (const r of rules){
+    const p = String(r.pat).toUpperCase().trim();
+    if (p && d.includes(p)) return {category:r.cat, confidence:1, why:"rule:" + r.pat};
+  }
+  return {category:"UNKNOWN", confidence:0, why:"no rule matched"};
+}
+
+/* ------------------------------------------------------------ reconcile --- */
+
+function reconcile(acct){
+  let inC = 0, outC = 0;
+  for (const t of acct.txns){ if (t.cents >= 0) inC += t.cents; else outC += -t.cents; }
+  const opening = acct.openingCents ?? 0;
+  const interest = acct.interestCents ?? 0;
+  const expected = opening + inC + interest - outC;
+  const actual = acct.closingCents;
+  const variance = (actual === null || actual === undefined) ? null : actual - expected;
+  return {inCents:inC, outCents:outC, openingCents:opening, interestCents:interest,
+          expectedCents:expected, actualCents:actual ?? null, varianceCents:variance,
+          match: variance === 0};
+}
+
+/* ---------------------------------------------------------------- queue --- */
+
+function buildQueue(S){
+  const items = [];
+  for (const key of ["REG","DED"]){
+    const acct = S.accounts[key];
+    if (!acct.enabled) continue;
+
+    for (const t of acct.txns){
+      const c = t.category;
+      if (t.cents < 0 && c === "UNKNOWN")
+        items.push({id:t.id, kind:"unknown", sev:"blocking", acct:key, txn:t,
+          title:t.desc, amount:t.cents,
+          reason:"No rule matched and no category has been confirmed."});
+      else if (t.cents < 0 && c === "ATM_CASH" && !t.note)
+        items.push({id:t.id, kind:"cash", sev:"review", acct:key, txn:t,
+          title:t.desc, amount:t.cents,
+          reason:"Cash. Record what it was for, then give it a real category."});
+      else if (key === "DED" && t.cents < 0 && !t.evidence)
+        items.push({id:t.id, kind:"ded-evidence", sev:"blocking", acct:key, txn:t,
+          title:t.desc, amount:t.cents,
+          reason:"Dedicated-account spending needs documentation, not just a bank line."});
+      else if (key === "DED" && t.cents < 0 && !t.impairment)
+        items.push({id:t.id, kind:"ded-impairment", sev:"blocking", acct:key, txn:t,
+          title:t.desc, amount:t.cents,
+          reason:"The impairment-related question is unanswered."});
+      else if (t.cents < 0)
+        items.push({id:t.id, kind:"cleared", sev:"cleared", acct:key, txn:t,
+          title:t.desc, amount:t.cents, reason:"Categorised" + (t.evidence ? ", evidence linked" : "")});
+    }
+
+    const r = reconcile(acct);
+    if (r.varianceCents !== null && r.varianceCents !== 0)
+      items.push({id:"VAR-" + key, kind:"variance", sev:"blocking", acct:key, txn:null,
+        title:"Balance doesn't tie", amount:r.varianceCents,
+        reason:"Expected " + fmt(r.expectedCents) + " against a stated " + fmt(r.actualCents) +
+               ". Either a statement is missing or a movement was never captured."});
+  }
+  const order = {blocking:0, review:1, cleared:2};
+  return items.sort((a,b) => order[a.sev] - order[b.sev]);
+}
+
+/* ----------------------------------------------------------- form 6233 --- */
+
+function mapForm(S){
+  const reg = S.accounts.REG, ded = S.accounts.DED;
+  const q = buildQueue(S);
+  const blockers = q.filter(i => i.sev === "blocking");
+
+  const sum = (acct, set) => acct.txns.reduce((n,t) =>
+    (t.cents < 0 && set.has(t.category)) ? n + (-t.cents) : n, 0);
+
+  const regHF    = sum(reg, HOUSING_FOOD);
+  const regOther = sum(reg, OTHER_SPEND);
+  const regUnres = reg.txns.reduce((n,t) => (t.cents < 0 && UNRESOLVED.has(t.category)) ? n + (-t.cents) : n, 0);
+  const rRec = reconcile(reg), dRec = reconcile(ded);
+
+  const regVarBlock = blockers.filter(b => b.kind === "variance" && b.acct === "REG").map(b => b.id);
+  const dedImpBlock = blockers.filter(b => (b.kind === "ded-impairment" || b.kind === "ded-evidence")).map(b => b.id);
+  const regCatBlock = blockers.filter(b => b.acct === "REG" && (b.kind === "unknown")).map(b => b.id)
+                       .concat(q.filter(i => i.acct === "REG" && i.kind === "cash").map(i => i.id));
+
+  const rows = [
+    {q:"Did you (the payee) decide how the total accountable amount was used?",
+     value:"Yes", trace:"You confirm this; it is not computed.", blocked:[]},
+    {q:"How much did you spend for the beneficiary's food and housing?",
+     value:fmt(regHF), trace:"Sum of HOUSING and FOOD debits on ACCT-REG.", blocked:regCatBlock},
+    {q:"How much did you spend on clothing, education, medical and dental, recreation, or personal items?",
+     value:fmt(regOther), trace:"Sum of the remaining spend categories on ACCT-REG.", blocked:regCatBlock},
+    {q:"How much did you save for the beneficiary as of the last month in the report period?",
+     value:fmt(rRec.actualCents), trace:"Closing balance of ACCT-REG.", blocked:regVarBlock}
+  ];
+  if (ded.enabled){
+    const anyDebit = ded.txns.some(t => t.cents < 0);
+    rows.push(
+      {q:"Did you take money out of the dedicated account?",
+       value:anyDebit ? "Yes" : "No", trace:"Any debit on ACCT-DED during the period.", blocked:[]},
+      {q:"Is each purchase related to the impairment?",
+       value:dedAnswer(ded), trace:"Answered per debit on ACCT-DED.", blocked:dedImpBlock},
+      {q:"Dedicated account ending balance, including interest.",
+       value:fmt(dRec.actualCents), trace:"Closing balance of ACCT-DED, interest included.",
+       blocked:blockers.filter(b => b.kind === "variance" && b.acct === "DED").map(b => b.id)}
+    );
+  }
+  return {rows, blockers, regUnresolvedCents:regUnres, gated:blockers.length > 0};
+}
+
+function dedAnswer(ded){
+  const debits = ded.txns.filter(t => t.cents < 0);
+  const answered = debits.filter(t => t.impairment);
+  const no = answered.filter(t => t.impairment === "no");
+  if (!debits.length) return "—";
+  if (answered.length < debits.length) return answered.length + " of " + debits.length;
+  return no.length ? ("Not all — " + no.length + " need a written explanation") : "Yes, all";
+}
+
+/* ---------------------------------------------------------------- state --- */
+
+const S = {
+  period:{start:"", end:""},
+  parties:{payee:"", beneficiary:"", relationship:"", age:"adult"},
+  accounts:{
+    REG:{key:"REG", label:"ACCT-REG", enabled:true,  openingCents:null, closingCents:null, interestCents:0, txns:[]},
+    DED:{key:"DED", label:"ACCT-DED", enabled:false, openingCents:null, closingCents:null, interestCents:0, txns:[]}
+  },
+  rules: DEFAULT_RULES.map(r => ({...r})),
+  events: [],
+  seq: 0
+};
+
+function logEvent(txt){ S.events.push({at:new Date().toISOString().slice(0,19).replace("T"," "), txt}); }
+function nextId(){ return "TXN-" + String(++S.seq).padStart(4,"0"); }
+
+function addTxns(acctKey, list){
+  const acct = S.accounts[acctKey];
+  for (const t of list){
+    const c = classify(t.desc, S.rules);
+    acct.txns.push({
+      id: nextId(), date:t.date, desc:t.desc, cents:t.cents,   // immutable
+      category:c.category, confidence:c.confidence, why:c.why, // mutable, versioned by events
+      note:"", evidence:false, impairment:null, suggestion:null
+    });
+  }
+  acct.txns.sort((a,b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+  logEvent("Imported " + list.length + " transactions into " + acct.label);
+}
+
+function reclassifyAll(){
+  for (const k of ["REG","DED"]) for (const t of S.accounts[k].txns){
+    if (t.manual) continue;                       // a person's answer outranks a rule
+    const c = classify(t.desc, S.rules);
+    t.category = c.category; t.confidence = c.confidence; t.why = c.why;
+  }
+}
+
+/* ------------------------------------------------------------------- ui --- */
+
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const VIEWS = [
+  {id:"setup",  label:"Period"},
+  {id:"import", label:"Import"},
+  {id:"ledger", label:"Ledger"},
+  {id:"recon",  label:"Reconcile"},
+  {id:"queue",  label:"Queue"},
+  {id:"form",   label:"Form"},
+  {id:"save",   label:"Save"}
+];
+let current = "setup";
+
+function show(id){
+  current = id;
+  VIEWS.forEach(v => $("#v-" + v.id).classList.toggle("hidden", v.id !== id));
+  renderNav(); renderAll();
+}
+
+function renderNav(){
+  const q = buildQueue(S);
+  const open = q.filter(i => i.sev !== "cleared").length;
+  $("#nav").innerHTML = VIEWS.map(v =>
+    `<button data-view="${v.id}" aria-current="${v.id === current}">${v.label}` +
+    (v.id === "queue" && open ? `<span class="n">${open}</span>` : "") + `</button>`).join("");
+}
+
+function renderAll(){
+  if (current === "ledger") renderLedger();
+  if (current === "recon")  renderRecon();
+  if (current === "queue")  { renderQueue(); renderLlmPanel(); }
+  if (current === "form")   renderForm();
+  if (current === "import") renderRules();
+}
+
+/* --- ledger --- */
+function renderLedger(){
+  const key = $("#led-acct").value, acct = S.accounts[key];
+  if (!acct.enabled){
+    $("#led-summary").innerHTML = `<div class="note">This account is not in scope for the period.</div>`;
+    $("#led-tbl").querySelector("tbody").innerHTML = ""; return;
+  }
+  const totals = {};
+  let spent = 0, received = 0;
+  for (const t of acct.txns){
+    if (t.cents < 0){ totals[t.category] = (totals[t.category]||0) + (-t.cents); spent += -t.cents; }
+    else received += t.cents;
+  }
+  const cats = Object.entries(totals).sort((a,b) => b[1]-a[1]);
+  $("#led-summary").innerHTML =
+    `<div class="hd"><span class="eyebrow">${acct.label} &middot; ${acct.txns.length} transactions</span>
+       <span class="num" style="font-size:16px">${fmt(spent)} out &middot; ${fmt(received)} in</span></div>` +
+    (cats.length ? `<div class="stack">` + cats.map(([c,v]) => {
+      const bad = UNRESOLVED.has(c);
+      return `<div style="display:flex;gap:10px;align-items:center${bad?";background:var(--warn-bg);border-radius:8px;padding:6px 8px":""}">
+        <span style="flex:1;font-size:13px${bad?";font-weight:600;color:var(--warn-d)":""}">${esc(c)}</span>
+        <span class="num" style="font-size:13px${bad?";font-weight:600;color:var(--warn-d)":""}">${fmt(v)}</span></div>`;
+    }).join("") + `</div>` : `<div class="note">Nothing imported into this account yet.</div>`);
+
+  $("#led-tbl").querySelector("tbody").innerHTML = acct.txns.map(t => `<tr>
+    <td class="mono" style="white-space:nowrap">${esc(t.date)}</td>
+    <td class="mono">${esc(t.desc)}${t.note ? `<div class="muted">${esc(t.note)}</div>` : ""}</td>
+    <td><span class="pill ${UNRESOLVED.has(t.category)?"warn":"mute"}">${esc(t.category)}</span></td>
+    <td class="r num">${t.confidence.toFixed(2)}</td>
+    <td class="r num" style="white-space:nowrap">${fmt(t.cents)}</td></tr>`).join("");
+}
+
+/* --- reconcile --- */
+function renderRecon(){
+  $("#recon-cards").innerHTML = ["REG","DED"].map(k => {
+    const a = S.accounts[k];
+    if (!a.enabled) return "";
+    const r = reconcile(a);
+    const known = r.actualCents !== null;
+    const pill = !known ? `<span class="pill mute">NO CLOSING BALANCE</span>`
+      : r.match ? `<span class="pill ok"><span class="dot" style="background:var(--ok)"></span>MATCH</span>`
+                : `<span class="pill bad"><span class="dot" style="background:var(--bad)"></span>VARIANCE</span>`;
+    return `<div class="card">
+      <div class="hd"><span class="eyebrow">${a.label} &middot; ${k === "REG" ? "regular accountable funds" : "dedicated account"}</span>${pill}</div>
+      <div class="big">${fmt(r.actualCents)}</div>
+      <div class="muted" style="margin-bottom:10px">stated closing balance</div>
+      <div class="math">
+        opening <b>${fmt(r.openingCents)}</b><br>
+        money in <b>${fmt(r.inCents)}</b>${r.interestCents ? ` &nbsp;+&nbsp; interest <b>${fmt(r.interestCents)}</b>` : ""}<br>
+        money out <b>${fmt(r.outCents)}</b><br>
+        expected closing <b>${fmt(r.expectedCents)}</b>
+      </div>
+      ${known && !r.match
+        ? `<div class="note bad" style="margin-top:10px">${fmt(r.varianceCents)} unaccounted for. This is a queue item, not a rounding artefact.</div>`
+        : known ? `<div class="note ok" style="margin-top:10px">Ties to the penny.</div>`
+                : `<div class="note warn" style="margin-top:10px">Enter the closing balance on the Period screen to prove this account.</div>`}
+    </div>`;
+  }).join("");
+}
+
+/* --- queue --- */
+function renderQueue(){
+  const q = buildQueue(S);
+  if (!q.length){ $("#queue-list").innerHTML = `<div class="note ok">Nothing queued. Import some transactions to begin.</div>`; return; }
+  $("#queue-list").innerHTML = q.map(i => {
+    const cls = i.sev === "blocking" ? "blocking" : i.sev === "cleared" ? "cleared" : "";
+    const dot = i.sev === "blocking" ? "var(--bad)" : i.sev === "cleared" ? "var(--ok)" : "var(--warn)";
+    let controls = "";
+    if (i.sev !== "cleared" && i.txn){
+      const opts = CATEGORIES.map(c => `<option value="${c}"${c === i.txn.category ? " selected":""}>${c}</option>`).join("");
+      controls = `<div class="row" style="margin-top:10px;gap:8px">
+          <select data-act="cat" data-id="${i.id}" style="flex:1 1 150px">${opts}</select>
+          <input data-act="note" data-id="${i.id}" placeholder="What was it for?" value="${esc(i.txn.note||"")}" style="flex:2 1 220px">
+        </div>
+        <div class="row" style="margin-top:8px;gap:8px;align-items:center">
+          <label style="display:flex;gap:7px;align-items:center;font-size:12px;color:var(--ink);margin:0;flex:0 0 auto">
+            <input type="checkbox" data-act="ev" data-id="${i.id}" ${i.txn.evidence?"checked":""} style="width:auto;min-height:0"> Evidence on file
+          </label>
+          ${i.acct === "DED" ? `<select data-act="imp" data-id="${i.id}" style="flex:0 1 240px">
+              <option value="">Impairment-related?</option>
+              <option value="yes"${i.txn.impairment==="yes"?" selected":""}>Yes — related</option>
+              <option value="no"${i.txn.impairment==="no"?" selected":""}>No — needs explanation</option>
+            </select>` : ""}
+          <button class="btn ghost sm" data-act="suggest" data-id="${i.id}">Suggest a label</button>
+        </div>
+        ${i.txn.suggestion ? `<div class="note warn" style="margin-top:8px">Model proposes <b>${esc(i.txn.suggestion)}</b> — a guess from the description alone, worth nothing until you accept it.
+          <button class="btn ghost sm" data-act="accept" data-id="${i.id}" style="margin-left:8px">Accept</button></div>` : ""}`;
+    }
+    return `<div class="qitem ${cls}">
+      <div style="display:flex;align-items:center;gap:9px">
+        <span class="dot" style="background:${dot}"></span>
+        <span class="mono" style="font-size:11px;color:var(--ink2);flex:1">${esc(i.id)}</span>
+        <span class="pill mute">${esc(S.accounts[i.acct].label)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-top:7px">
+        <span class="mono" style="font-size:13px">${esc(i.title)}</span>
+        <span class="num" style="font-size:15px;font-weight:500">${fmt(i.amount)}</span>
+      </div>
+      <div class="muted" style="margin-top:5px">${esc(i.reason)}</div>
+      ${i.sev === "blocking" ? `<div style="margin-top:8px"><span class="pill bad">BLOCKS THE FORM</span></div>` : ""}
+      ${controls}</div>`;
+  }).join("");
+}
+
+function findTxn(id){
+  for (const k of ["REG","DED"]) { const t = S.accounts[k].txns.find(x => x.id === id); if (t) return t; }
+  return null;
+}
+
+/* --- form --- */
+function renderForm(){
+  const m = mapForm(S);
+  const head = m.gated
+    ? `<div class="note bad" style="margin-bottom:12px"><b>${m.blockers.length} answer${m.blockers.length>1?"s have":" has"} no source yet.</b>
+        They stay empty until the queue clears — nothing is printed that cannot be traced to a transaction.</div>`
+    : `<div class="note ok" style="margin-bottom:12px">Every answer below traces to reconciled transactions.</div>`;
+  const rows = m.rows.map(r => {
+    const blocked = r.blocked.length > 0;
+    return `<div class="card tight" style="${blocked?"background:#FCF6F4":""}">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+        <span style="flex:1;font-size:13px;color:var(--ink2)">${esc(r.q)}</span>
+        <span class="num" style="font-size:15px;font-weight:500;${blocked?"color:#C2BFB6":""}">${blocked?"——":esc(r.value)}</span>
+      </div>
+      <div class="muted" style="margin-top:6px">${blocked
+        ? `<span style="color:var(--bad)">Blocked by ${r.blocked.map(esc).join(", ")}</span>`
+        : esc(r.trace)}</div></div>`;
+  }).join("");
+  const unres = m.regUnresolvedCents
+    ? `<div class="note warn" style="margin-top:4px">${fmt(m.regUnresolvedCents)} of ACCT-REG spending sits in an unresolved
+        category and is therefore in neither reported bucket. Clear it or the two figures will not add up to what left the account.</div>` : "";
+  $("#form-out").innerHTML = head + rows + unres +
+    `<div class="note" style="margin-top:12px">You review and file this yourself. Nothing is submitted from here, and supporting
+      documents are retained for two years rather than mailed.</div>`;
+}
+
+/* --- rules --- */
+function renderRules(){
+  $("#rules-tbl").querySelector("tbody").innerHTML = S.rules.map((r,i) => `<tr>
+    <td class="mono">${esc(r.pat)}</td><td>${esc(r.cat)}</td>
+    <td class="r"><button class="btn ghost sm" data-act="delrule" data-i="${i}">Remove</button></td></tr>`).join("");
+  if (!$("#rule-cat").options.length)
+    $("#rule-cat").innerHTML = CATEGORIES.filter(c => c !== "UNKNOWN").map(c => `<option>${c}</option>`).join("");
+}
+
+/* ------------------------------------------------------- optional model --- */
+/* Suggests a label for one merchant string. Never writes to the ledger. */
+
+const LLM = {pipe:null, busy:false, id:null};
+const MODELS = [
+  {id:"HuggingFaceTB/SmolLM2-360M-Instruct", label:"SmolLM2 360M — smallest (~270 MB)"},
+  {id:"onnx-community/Qwen2.5-0.5B-Instruct", label:"Qwen2.5 0.5B — a little better (~400 MB)"}
+];
+
+function renderLlmPanel(){
+  const p = $("#llm-panel");
+  if (LLM.pipe){
+    p.innerHTML = `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="pill ok">MODEL READY</span><span class="muted mono">${esc(LLM.id)}</span>
+      <span class="muted" style="flex:1">Suggestions are proposals only — accept one and it is logged as your decision, not the model's.</span></div>`;
+    return;
+  }
+  p.innerHTML = `<div class="row" style="align-items:flex-end">
+      <div style="flex:2 1 280px"><label for="llm-model">Optional local model (runs on CPU, in this page)</label>
+        <select id="llm-model">${MODELS.map(m => `<option value="${m.id}">${esc(m.label)}</option>`).join("")}</select></div>
+      <button class="btn ghost" id="btn-llm-load">Download and enable</button>
+    </div>
+    <div class="muted" style="margin-top:8px">Everything on every other screen works without this. The download happens once,
+      needs an internet connection, and is slow on CPU. It only ever proposes a category for a description no rule matched.</div>
+    <div id="llm-status" class="muted" style="margin-top:8px"></div>`;
+  $("#btn-llm-load").onclick = loadModel;
+}
+
+async function loadModel(){
+  const id = $("#llm-model").value, st = $("#llm-status");
+  $("#btn-llm-load").disabled = true;
+  st.textContent = "Fetching the runtime…";
+  try{
+    const tf = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3");
+    tf.env.allowLocalModels = false;
+    LLM.pipe = await tf.pipeline("text-generation", id, {
+      dtype:"q4", device:"wasm",
+      progress_callback: p => { if (p.status === "progress" && p.total)
+        st.textContent = "Downloading " + p.file + " — " + Math.round(p.loaded/p.total*100) + "%"; }
+    });
+    LLM.id = id; renderLlmPanel();
+  }catch(e){
+    st.innerHTML = `<span style="color:var(--bad)">Could not load the model: ${esc(e.message||e)}.
+      This needs network access and a browser with WebAssembly; everything else on this page still works.</span>`;
+    $("#btn-llm-load").disabled = false;
+  }
+}
+
+async function suggest(txn){
+  if (!LLM.pipe){ alert("Enable the optional model first — it is the panel at the top of this screen."); return; }
+  if (LLM.busy) return;
+  LLM.busy = true;
+  const allowed = CATEGORIES.filter(c => c !== "UNKNOWN");
+  const prompt = [
+    {role:"system", content:"You label bank transactions. Reply with exactly one word from this list and nothing else: " + allowed.join(" ")},
+    {role:"user", content:'Transaction description: "' + txn.desc + '"'}
+  ];
+  try{
+    const out = await LLM.pipe(prompt, {max_new_tokens:6, do_sample:false});
+    const text = String(out?.[0]?.generated_text?.at?.(-1)?.content ?? out?.[0]?.generated_text ?? "").toUpperCase();
+    const hit = allowed.find(c => text.includes(c));
+    txn.suggestion = hit || null;
+    if (!hit) alert("The model did not return a usable label. Categorise it yourself.");
+  }catch(e){ alert("Suggestion failed: " + (e.message||e)); }
+  LLM.busy = false; renderQueue();
+}
+
+/* --------------------------------------------------------------- export --- */
+
+function download(name, text, mime){
+  const b = new Blob([text], {type:mime});
+  const u = URL.createObjectURL(b), a = document.createElement("a");
+  a.href = u; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(u), 2000);
+}
+
+function periodSlug(){
+  const d = S.period.end || S.period.start;
+  if (!d) return "PERIOD";
+  const [y,m] = d.split("-");
+  return y + "_" + ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"][Number(m)-1];
+}
+
+function toMarkdown(){
+  const slug = periodSlug(), m = mapForm(S), q = buildQueue(S);
+  const openItems = q.filter(i => i.sev !== "cleared");
+  const acctBlock = k => {
+    const a = S.accounts[k]; if (!a.enabled) return "";
+    const r = reconcile(a);
+    return `\n### ${a.label}\n\n` +
+      `- opening:: ${fmt(r.openingCents)}\n- money-in:: ${fmt(r.inCents)}\n- money-out:: ${fmt(r.outCents)}\n` +
+      `- interest:: ${fmt(r.interestCents)}\n- expected-closing:: ${fmt(r.expectedCents)}\n` +
+      `- stated-closing:: ${fmt(r.actualCents)}\n- variance:: ${fmt(r.varianceCents)}\n` +
+      `- verdict:: ${r.actualCents === null ? "NOT PROVEN" : r.match ? "MATCH" : "VARIANCE"}\n`;
+  };
+  return `---
+node_id: "ssa_recon_${slug.toLowerCase()}"
+node_type: "period_ledger"
+version: "1.0.0"
+status: "active"
+single_source: true
+tags:
+  - "domain:financial-administration"
+  - "status:active"
+  - "period:${slug.toLowerCase()}"
+parent_node: "[[SSA_RECON]]"
+linked_nodes:
+  - "[[SSA_RECON]]"
+  - "[[Master_OS_Hub]]"
+---
+
+# [[SSA_RECON_${slug}]]
+
+period:: ${S.period.start || "[start]"} → ${S.period.end || "[end]"}
+payee:: ${S.parties.payee || "[payee]"}
+beneficiary:: ${S.parties.beneficiary || "[beneficiary]"} (${S.parties.relationship || "[relationship]"}, ${S.parties.age})
+generated:: ${new Date().toISOString().slice(0,10)}
+
+## 1. Reconciliation
+${acctBlock("REG")}${acctBlock("DED")}
+## 2. Open exceptions
+
+${openItems.length ? openItems.map(i =>
+  `- [ ] **${i.id}** ${i.title} ${fmt(i.amount)} · ${S.accounts[i.acct].label} — ${i.reason}`).join("\n")
+  : "None. Every item cleared."}
+
+## 3. Mapped to SSA-6233-BK
+
+${m.gated ? `> Gated: ${m.blockers.length} answer(s) have no traceable source.\n` : ""}
+| Form line | Value | Source |
+|---|---|---|
+${m.rows.map(r => `| ${r.q} | ${r.blocked.length ? "BLOCKED — " + r.blocked.join(", ") : r.value} | ${r.trace} |`).join("\n")}
+
+Form wording is unverified against the live SSA-6233-BK. Check line by line
+against the paper form before transcribing. See [[SSA_RECON]] Section 9.
+`;
+}
+
+/* ------------------------------------------------------------ self-test --- */
+
+function selftest(){
+  const out = [], t = (name, cond) => { out.push((cond ? "  pass  " : "  FAIL  ") + name); return !!cond; };
+  let ok = true;
+
+  ok &= t("parseMoney '$1,240.00' = 124000",       parseMoney("$1,240.00") === 124000);
+  ok &= t("parseMoney '(83.42)' = -8342",          parseMoney("(83.42)") === -8342);
+  ok &= t("parseMoney '-83.42' = -8342",           parseMoney("-83.42") === -8342);
+  ok &= t("parseMoney '1234.5' = 123450",          parseMoney("1234.5") === 123450);
+  ok &= t("parseMoney '' = null",                  parseMoney("") === null);
+  ok &= t("parseMoney 'n/a' = null",               parseMoney("n/a") === null);
+  ok &= t("fmt(-12600) = −$126.00",                fmt(-12600) === "−$126.00");
+  ok &= t("fmt(157000) = $1,570.00",               fmt(157000) === "$1,570.00");
+
+  // the float trap: 0.10 + 0.20 must be exactly 30 cents
+  ok &= t("0.10 + 0.20 = 30 cents exactly",        parseMoney("0.10") + parseMoney("0.20") === 30);
+  let acc = 0; for (let i = 0; i < 1000; i++) acc += parseMoney("0.07");
+  ok &= t("0.07 summed 1000 times = $70.00",       acc === 7000);
+
+  const rows = parseCSV('date,description,amount\n2026-08-14,"WALMART #2384, STORE",-83.42\n2026-08-01,SSA DEPOSIT,949.00');
+  ok &= t("CSV keeps a quoted comma in one field",  rows[1][1] === "WALMART #2384, STORE");
+  const mapped = mapRows(rows);
+  ok &= t("CSV maps 2 transactions",                mapped.txns.length === 2);
+  ok &= t("CSV amount -83.42 -> -8342",             mapped.txns[0].cents === -8342);
+
+  const deb = mapRows(parseCSV('Date,Payee,Debit,Credit\n2026-08-02,RENT,595.00,\n2026-08-01,BENEFIT,,949.00'));
+  ok &= t("debit column becomes money out",         deb.txns[0].cents === -59500);
+  ok &= t("credit column becomes money in",         deb.txns[1].cents === 94900);
+
+  // Section 12's dedicated account: 2000 + 0 - 430 = 1570, stated 1570
+  const ded = {openingCents:200000, closingCents:157000, interestCents:0,
+               txns:[{cents:-25000},{cents:-9658},{cents:-8342}]};
+  const dr = reconcile(ded);
+  ok &= t("dedicated expected = $1,570.00",         dr.expectedCents === 157000);
+  ok &= t("dedicated variance = 0 (MATCH)",         dr.varianceCents === 0 && dr.match === true);
+
+  // regular with a real shortfall
+  const reg = {openingCents:124000, closingCents:95842, interestCents:0,
+               txns:[{cents:1138800},{cents:-1154358}]};
+  const rr = reconcile(reg);
+  ok &= t("regular expected = $1,084.42",           rr.expectedCents === 108442);
+  ok &= t("regular variance = −$126.00",            rr.varianceCents === -12600 && rr.match === false);
+
+  // the two accounts must not influence one another
+  const before = reconcile(ded).expectedCents;
+  reg.txns.push({cents:-500000});
+  ok &= t("changing REG leaves DED untouched",      reconcile(ded).expectedCents === before);
+
+  ok &= t("interest lifts the expected closing",    reconcile({openingCents:100000, closingCents:null,
+                                                      interestCents:250, txns:[]}).expectedCents === 100250);
+
+  ok &= t("unmatched description stays UNKNOWN",    classify("ZZQ TRADING", DEFAULT_RULES).category === "UNKNOWN");
+  ok &= t("UNKNOWN carries zero confidence",        classify("ZZQ TRADING", DEFAULT_RULES).confidence === 0);
+  ok &= t("a rule hit is certain, not a guess",     classify("KROGER #418", DEFAULT_RULES).confidence === 1);
+  ok &= t("rule matches case-insensitively",        classify("kroger #418", DEFAULT_RULES).category === "FOOD");
+
+  // form mapping on a throwaway state
+  const T = JSON.parse(JSON.stringify(S));
+  T.accounts.REG.openingCents = 0; T.accounts.REG.closingCents = 0; T.accounts.DED.enabled = false;
+  T.accounts.REG.txns = [
+    {id:"T1", cents:-100000, category:"HOUSING", desc:"RENT", date:"2026-01-01", evidence:true, note:"", impairment:null},
+    {id:"T2", cents:-20000,  category:"FOOD",    desc:"KROGER", date:"2026-01-02", evidence:true, note:"", impairment:null},
+    {id:"T3", cents:-5000,   category:"PERSONAL",desc:"TARGET", date:"2026-01-03", evidence:true, note:"", impairment:null},
+    {id:"T4", cents:125000,  category:"TRANSFER",desc:"BENEFIT", date:"2026-01-01", evidence:true, note:"", impairment:null}
+  ];
+  const fm = mapForm(T);
+  ok &= t("food+housing = $1,200.00",               fm.rows[1].value === "$1,200.00");
+  ok &= t("other spend = $50.00",                   fm.rows[2].value === "$50.00");
+  ok &= t("a clean period is not gated",            fm.gated === false);
+
+  T.accounts.REG.txns.push({id:"T5", cents:-999, category:"UNKNOWN", desc:"ZZQ", date:"2026-01-04", evidence:false, note:"", impairment:null});
+  const fm2 = mapForm(T);
+  ok &= t("one UNKNOWN debit gates the form",       fm2.gated === true);
+  ok &= t("the blocked row names its blocker",      fm2.rows[1].blocked.includes("T5"));
+  ok &= t("unresolved money is reported separately", fm2.regUnresolvedCents === 999);
+
+  // end to end over the worked example: two accounts, one short, one clean
+  const E = JSON.parse(JSON.stringify(S));
+  E.accounts.REG.openingCents = 124000; E.accounts.REG.closingCents = 95842; E.accounts.REG.txns = [];
+  E.accounts.DED.enabled = true; E.accounts.DED.openingCents = 200000;
+  E.accounts.DED.closingCents = 157000; E.accounts.DED.interestCents = 0; E.accounts.DED.txns = [];
+  const mk = (id,date,desc,cents) => { const c = classify(desc, DEFAULT_RULES);
+    return {id, date, desc, cents, category:c.category, confidence:c.confidence, why:c.why,
+            note:"", evidence:false, impairment:null, suggestion:null}; };
+  E.accounts.REG.txns = [
+    mk("E1","2026-08-01","SSA BENEFIT DEPOSIT",1138800),
+    mk("E2","2026-08-02","MERIDIAN PROPERTY MGMT",-714000),
+    mk("E3","2026-08-22","KROGER #418",-312000),
+    mk("E4","2026-08-09","TARGET T-1147",-98358),
+    mk("E5","2026-08-14","ATM WITHDRAWAL",-30000)];
+  E.accounts.DED.txns = [
+    mk("E6","2026-07-11","MERIDIAN PEDIATRIC THERAPY",-25000),
+    mk("E7","2026-06-03","ADAPTIVE SENSORY SUPPLY",-9658),
+    mk("E8","2026-08-14","WALMART #2384",-8342)];
+  const eReg = reconcile(E.accounts.REG), eDed = reconcile(E.accounts.DED);
+  ok &= t("example: REG expected $1,084.42",        eReg.expectedCents === 108442);
+  ok &= t("example: REG short by −$126.00",         eReg.varianceCents === -12600);
+  ok &= t("example: DED ties at $1,570.00",         eDed.varianceCents === 0);
+  const eq = buildQueue(E);
+  ok &= t("example: PROPERTY rule caught the rent", E.accounts.REG.txns[1].category === "HOUSING");
+  ok &= t("example: TARGET matched no rule",        E.accounts.REG.txns[3].category === "UNKNOWN");
+  ok &= t("example: ATM read as cash, not a guess", E.accounts.REG.txns[4].category === "ATM_CASH");
+  ok &= t("example: the deposit is not queued",     !eq.some(i => i.id === "E1"));
+  ok &= t("example: cash is review, not blocking",  eq.find(i => i.id === "E5").sev === "review");
+  ok &= t("example: variance is its own item",      eq.some(i => i.id === "VAR-REG" && i.sev === "blocking"));
+  ok &= t("example: therapy blocked for evidence",  eq.find(i => i.id === "E6").kind === "ded-evidence");
+  ok &= t("example: form is gated",                 mapForm(E).gated === true);
+  // clearing everything must actually clear it
+  E.accounts.REG.closingCents = 108442;
+  E.accounts.REG.txns[3].category = "PERSONAL";
+  E.accounts.REG.txns[4].category = "FOOD"; E.accounts.REG.txns[4].note = "groceries, market stall";
+  for (const x of E.accounts.DED.txns){ x.evidence = true; x.impairment = "yes";
+    if (x.category === "UNKNOWN") x.category = "MEDICAL"; }
+  const eq2 = buildQueue(E);
+  ok &= t("example: nothing blocking once resolved", eq2.filter(i => i.sev === "blocking").length === 0);
+  ok &= t("example: form ungates",                   mapForm(E).gated === false);
+  // 7,140 housing + 3,120 food + the 300 of cash just reclassified as food
+  ok &= t("example: food+housing = $10,560.00",      mapForm(E).rows[1].value === "$10,560.00");
+  ok &= t("example: other spend = $983.58",          mapForm(E).rows[2].value === "$983.58");
+  // the invariant that matters: the two reported buckets must account for every
+  // penny that left the account, or the form understates what was spent
+  const eSpend = E.accounts.REG.txns.reduce((n,x) => x.cents < 0 ? n + (-x.cents) : n, 0);
+  const eHF = E.accounts.REG.txns.reduce((n,x) => (x.cents < 0 && HOUSING_FOOD.has(x.category)) ? n + (-x.cents) : n, 0);
+  const eOT = E.accounts.REG.txns.reduce((n,x) => (x.cents < 0 && OTHER_SPEND.has(x.category)) ? n + (-x.cents) : n, 0);
+  ok &= t("example: buckets account for all spend", eHF + eOT === eSpend);
+  ok &= t("example: no unresolved money left",      mapForm(E).regUnresolvedCents === 0);
+
+  const pass = out.filter(l => l.startsWith("  pass")).length;
+  const fail = out.filter(l => l.startsWith("  FAIL")).length;
+  const summary = fail ? ("FAILED " + fail + " of " + (pass+fail)) : ("ALL " + pass + " CHECKS PASS");
+  return {text: out.join("\n") + "\n\n" + summary, pass, fail};
+}
+
+/* ------------------------------------------------------------------ run --- */
+
+function readSetup(){
+  S.period.start = $("#p-start").value; S.period.end = $("#p-end").value;
+  S.parties.payee = $("#p-payee").value.trim();
+  S.parties.beneficiary = $("#p-benef").value.trim();
+  S.parties.relationship = $("#p-rel").value.trim();
+  S.parties.age = $("#p-age").value;
+  S.accounts.REG.openingCents = parseMoney($("#reg-open").value);
+  S.accounts.REG.closingCents = parseMoney($("#reg-close").value);
+  S.accounts.DED.enabled = $("#ded-exists").checked;
+  S.accounts.DED.openingCents = parseMoney($("#ded-open").value);
+  S.accounts.DED.closingCents = parseMoney($("#ded-close").value);
+  S.accounts.DED.interestCents = parseMoney($("#ded-int").value) || 0;
+}
+function writeSetup(){
+  $("#p-start").value = S.period.start; $("#p-end").value = S.period.end;
+  $("#p-payee").value = S.parties.payee; $("#p-benef").value = S.parties.beneficiary;
+  $("#p-rel").value = S.parties.relationship; $("#p-age").value = S.parties.age;
+  const v = c => c === null || c === undefined ? "" : (c/100).toFixed(2);
+  $("#reg-open").value = v(S.accounts.REG.openingCents);
+  $("#reg-close").value = v(S.accounts.REG.closingCents);
+  $("#ded-exists").checked = S.accounts.DED.enabled;
+  $("#ded-fields").classList.toggle("hidden", !S.accounts.DED.enabled);
+  $("#ded-open").value = v(S.accounts.DED.openingCents);
+  $("#ded-close").value = v(S.accounts.DED.closingCents);
+  $("#ded-int").value = v(S.accounts.DED.interestCents);
+}
+
+function loadExample(){
+  S.period = {start:"2025-09-01", end:"2026-08-31"};
+  S.parties = {payee:"", beneficiary:"", relationship:"", age:"adult"};
+  S.accounts.REG.openingCents = 124000; S.accounts.REG.closingCents = 95842;
+  S.accounts.DED.enabled = true; S.accounts.DED.openingCents = 200000;
+  S.accounts.DED.closingCents = 157000; S.accounts.DED.interestCents = 0;
+  S.accounts.REG.txns = []; S.accounts.DED.txns = []; S.seq = 0;
+  addTxns("REG", [
+    {date:"2026-08-01", desc:"SSA BENEFIT DEPOSIT",   cents:1138800},
+    {date:"2026-08-02", desc:"MERIDIAN PROPERTY MGMT", cents:-714000},
+    {date:"2026-08-22", desc:"KROGER #418",            cents:-312000},
+    {date:"2026-08-09", desc:"TARGET T-1147",          cents:-98358},
+    {date:"2026-08-14", desc:"ATM WITHDRAWAL",         cents:-30000}
+  ]);
+  addTxns("DED", [
+    {date:"2026-07-11", desc:"MERIDIAN PEDIATRIC THERAPY", cents:-25000},
+    {date:"2026-06-03", desc:"ADAPTIVE SENSORY SUPPLY",    cents:-9658},
+    {date:"2026-08-14", desc:"WALMART #2384",              cents:-8342}
+  ]);
+  writeSetup(); show("recon");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  $("#nav").addEventListener("click", e => { const b = e.target.closest("button[data-view]"); if (b) show(b.dataset.view); });
+  $("#ded-exists").addEventListener("change", e => $("#ded-fields").classList.toggle("hidden", !e.target.checked));
+  $("#btn-save-setup").onclick = () => { readSetup(); logEvent("Period saved"); show("import"); };
+  $("#btn-example").onclick = loadExample;
+  $("#led-acct").onchange = renderLedger;
+
+  $("#btn-import").onclick = () => {
+    const key = $("#imp-acct").value;
+    if (key === "DED" && !S.accounts.DED.enabled){
+      $("#imp-result").innerHTML = `<div class="note bad" style="margin-top:12px">Mark the dedicated account as in scope on the Period screen first.</div>`; return;
+    }
+    const res = mapRows(parseCSV($("#imp-text").value));
+    if (res.error){ $("#imp-result").innerHTML = `<div class="note bad" style="margin-top:12px">${esc(res.error)}</div>`; return; }
+    addTxns(key, res.txns);
+    $("#imp-result").innerHTML = `<div class="note ok" style="margin-top:12px">Imported ${res.txns.length} into ${S.accounts[key].label}` +
+      (res.skipped ? `, skipped ${res.skipped} unreadable row(s)` : "") + `. Unmatched descriptions are waiting in the queue.</div>`;
+    $("#imp-text").value = ""; renderNav();
+  };
+  $("#imp-file").onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader(); r.onload = () => { $("#imp-text").value = r.result; }; r.readAsText(f);
+  };
+  $("#btn-clear-txns").onclick = () => {
+    if (!confirm("Remove every imported transaction from both accounts? Balances and rules are kept.")) return;
+    S.accounts.REG.txns = []; S.accounts.DED.txns = []; S.seq = 0;
+    logEvent("All transactions removed"); renderNav(); renderAll();
+  };
+  $("#btn-add-rule").onclick = () => {
+    const pat = $("#rule-pat").value.trim(); if (!pat) return;
+    S.rules.unshift({pat, cat:$("#rule-cat").value});
+    $("#rule-pat").value = ""; reclassifyAll(); renderRules(); renderNav();
+  };
+
+  document.body.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const act = b.dataset.act;
+    if (act === "delrule"){ S.rules.splice(Number(b.dataset.i),1); reclassifyAll(); renderRules(); renderNav(); return; }
+    const txn = findTxn(b.dataset.id); if (!txn) return;
+    if (act === "suggest") suggest(txn);
+    if (act === "accept"){ txn.category = txn.suggestion; txn.manual = true; txn.confidence = 1;
+      txn.why = "accepted a model suggestion"; txn.suggestion = null;
+      logEvent(txn.id + " categorised " + txn.category + " (model proposal, accepted by the payee)");
+      renderQueue(); renderNav(); }
+  });
+  document.body.addEventListener("change", e => {
+    const el = e.target.closest("[data-act]"); if (!el) return;
+    const txn = findTxn(el.dataset.id); if (!txn) return;
+    const act = el.dataset.act;
+    if (act === "cat"){ txn.category = el.value; txn.manual = true; txn.confidence = 1; txn.why = "set by the payee";
+      logEvent(txn.id + " categorised " + el.value); }
+    if (act === "note"){ txn.note = el.value; logEvent(txn.id + " note recorded"); }
+    if (act === "ev"){ txn.evidence = el.checked; logEvent(txn.id + " evidence " + (el.checked ? "linked" : "unlinked")); }
+    if (act === "imp"){ txn.impairment = el.value || null; logEvent(txn.id + " impairment: " + (el.value || "unanswered")); }
+    renderQueue(); renderNav();
+  });
+
+  $("#btn-export-json").onclick = () => { readSetup(); download("ssa-recon-" + periodSlug() + ".json", JSON.stringify(S,null,2), "application/json"); };
+  $("#btn-export-md").onclick   = () => { readSetup(); download("SSA_RECON_" + periodSlug() + ".md", toMarkdown(), "text/markdown"); };
+  $("#btn-import-json").onclick = () => $("#file-json").click();
+  $("#file-json").onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const d = JSON.parse(r.result);
+        Object.assign(S, d);
+        writeSetup(); renderNav(); renderAll();
+        $("#save-result").innerHTML = `<div class="note ok" style="margin-top:12px">State restored.</div>`;
+      }catch(err){ $("#save-result").innerHTML = `<div class="note bad" style="margin-top:12px">Not a valid state file.</div>`; }
+    };
+    r.readAsText(f);
+  };
+  $("#btn-selftest").onclick = () => {
+    const r = selftest();
+    $("#selftest").innerHTML = esc(r.text).replace(/  pass  /g, '<span class="pass">  pass  </span>')
+                                          .replace(/  FAIL  /g, '<span class="fail">  FAIL  </span>');
+  };
+
+  writeSetup(); renderRules(); renderNav();
+
+  if (location.search.includes("example")) loadExample();
+
+  if (location.search.includes("selftest")){
+    const r = selftest();
+    document.title = "SELFTEST|" + r.pass + "|" + r.fail;
+    show("save");
+    $("#selftest").textContent = r.text;
+  }
+});
+</script>
+</body>
+</html>

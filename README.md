@@ -16,6 +16,7 @@ linked_nodes:
   - "[[Claude_Code_Implementation_Report]]"
   - "[[SSA_RECON]]"
   - "[[SSA_RECON_App_UI]]"
+  - "[[SSA_RECON_Local_App]]"
 ---
 
 # In-Chat-Organizer
@@ -33,6 +34,7 @@ statement of record lives in the node it links to.
 | The original build brief + delivery ledger | [[Claude_Code_Implementation_Report]] |
 | The SSA rep-payee reconciliation runtime (SSA-6233-BK) | [[SSA_RECON]] |
 | The SSA app's screens and design tokens | [[SSA_RECON_App_UI]] |
+| The offline single-file reconciliation tool | [[SSA_RECON_Local_App]] |
 
 ```bash
 python3 -m pytest tests -q
